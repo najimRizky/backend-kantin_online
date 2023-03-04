@@ -4,17 +4,19 @@ require("dotenv").config()
 const express = require('express')
 const mongoose = require("mongoose")
 
-
-/** @Initialization */ 
-const server = express()
-
 /** @Function */ 
 const responseParser = require("./helper/responseParser")
 const connectDatabase = require("./database/connectDatabase") 
 const serverListen = require("./server/serverListen")
+const requestLogger = require("./server/requestLogger")
 
 /** @Routes */
 const customerRoutes = require("./api/Customer/customerRoutes")
+
+/** @Initialization */ 
+const server = express()
+server.use(express.json())
+requestLogger(server)
 
 server.get('/', (_, res) => {
     return responseParser({ data: "REST API Kantin UMN", status: 200 }, res)
