@@ -1,9 +1,9 @@
 const statusConfig = require("./../config/statusConfig")
 
-const statusParser = (status) => {
+const statusParser = (status, message) => {
     return {
         status,
-        message: statusConfig[status]
+        message: message || statusConfig[status]
     }
 }
 

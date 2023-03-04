@@ -1,8 +1,8 @@
 const statusParser = require("./statusParser")
 
-const responseParser = ({status = 200, data = undefined, error = undefined}, res) => {
+const responseParser = ({status = 200, data = undefined, error = undefined, message = undefined}, res) => {
     return res.status(status).send({
-        ...statusParser(status),
+        ...statusParser(status, message),
         data,
         error
     })
