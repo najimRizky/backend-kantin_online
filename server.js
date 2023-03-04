@@ -1,16 +1,26 @@
 require("dotenv").config()
 
 const express = require('express')
+const mongoose = require("mongoose")
 const server = express()
-const log = require ("./helper/log")
 const port = process.env.PORT
 const projectTitle = process.env.PROJECT_TITLE
 
-server.get('/', (req, res) => {
-    log("/")
-    res.status(200).send('Welcome to Kantin UMN Rest API')
+const responseParser = require("./helper/responseParser")
+
+server.get('/', (_, res) => {
+    return responseParser({ data: undefined, status: 401 }, res)
 })
 
-server.listen(port, () => {
-    log(`--- ${projectTitle} is running on port:${port} ---`)
-})
+mongoose.set("strictQuery", false)
+mongoose.connect(process.env.MONGO_DB_URI)
+    .then(() => {
+        console.log("--- DB Connected ---")
+        server.listen(port, () => {
+            console.log(`--- ${projectTitle} is running on port:${port} ---`)
+        })
+    })
+    .catch(() => {
+        console.log("--- DB Connection Failed ---")
+        process.exit(1)
+    })
