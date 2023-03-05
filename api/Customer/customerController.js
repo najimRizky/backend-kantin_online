@@ -10,11 +10,17 @@ const registerCustomer = async (req, res) => {
 
         sendEmailConfirmation({
             email: customer.email,
-            full_name: customer.full_name,
-            confirmationToken: customer.confirmationToken
+            fullName: customer.full_name,
+            confirmationToken: customer.confirmation_token
         })
 
-        return responseParser({ data: customer, message: "New account created" }, res)
+        return responseParser({ 
+            data: {
+                email: customer.email,
+                full_name: customer.full_name
+            }, 
+            message: "New account created, check your email to confirm your account!" 
+        }, res)
     } catch (err) {
         return responseParser({ status: 400, message: err.message }, res)
     }
@@ -23,7 +29,7 @@ const registerCustomer = async (req, res) => {
 const confirmCustomer = async (req, res) => {
     const { token } = req.query
 
-    const customer = await Customer.findOne({confirmationToken: token})
+    const customer = await Customer.findOne({confirmation_token: token})
 
     if(customer) {
         await Customer.updateOne({_id: customer._id}, {$set: {confirmed: true}})

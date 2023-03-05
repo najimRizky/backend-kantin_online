@@ -29,7 +29,7 @@ const customerSchema = new Schema({
         type: Boolean,
         default: false
     },
-    confirmationToken: {
+    confirmation_token: {
         type: String,
         required: true,
     }
@@ -53,7 +53,7 @@ customerSchema.statics.register = async function ({ email, password, full_name }
         email, 
         password: passwordHash,
         full_name,
-        confirmationToken
+        confirmation_token: confirmationToken
     }
     
     const customer = await this.create(dataCustomer)

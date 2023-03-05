@@ -2,7 +2,7 @@ const nodemailer = require("nodemailer")
 const mailTransporter = require("../config/mailTransporter")
 const BASE_URL = process.env.BASE_URL
 
-const sendEmailConfirmation = ({ email, full_name, confirmationToken }) => {
+const sendEmailConfirmation = ({ email, fullName, confirmationToken }) => {
     const transporter = nodemailer.createTransport(mailTransporter)
     const confirmationLink = `${BASE_URL}/api/customer/confirm?token=${confirmationToken}`
     const mailOptions = {
@@ -14,7 +14,7 @@ const sendEmailConfirmation = ({ email, full_name, confirmationToken }) => {
                 <tr>
                     <td>
                         <h1 style="text-align: center; margin-top: 0;">Kantin UMN Email Confirmation</h1>
-                        <p>Dear ${full_name},</p>
+                        <p>Dear ${fullName},</p>
                         <p>Thank you for signing up with our service. To complete your registration, please click the button below to confirm your email address.</p>
                         <table cellpadding="0" cellspacing="0" border="0" align="center" style="margin-top: 20px;">
                             <tr>
