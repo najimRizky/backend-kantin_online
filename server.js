@@ -23,6 +23,9 @@ server.get('/', (_, res) => {
 })
 server.use("/api/customer", customerRoutes)
 
-
-connectDatabase(mongoose, server)
-// serverListen(server)
+const WITH_DB = eval(process.env.WITH_DB)
+if (WITH_DB) {
+    connectDatabase(mongoose, server)
+} else {
+    serverListen(server)
+}

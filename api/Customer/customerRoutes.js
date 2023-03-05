@@ -1,12 +1,13 @@
 const express = require("express")
-const registerMiddleware = require("./middleware/registerMiddleware")
 const router = express.Router()
+const customerValidation = require("./customerValidation")
 
 const { registerCustomer, confirmCustomer } = require("./customerController")
+const checkValidation = require("../../helper/checkValicdation")
 
 /** @see /api/customer */
 
-router.post("/register", registerMiddleware, registerCustomer)
+router.post("/register", customerValidation.register, checkValidation, registerCustomer)
 router.get("/confirm", confirmCustomer)
 
 module.exports = router
