@@ -37,12 +37,6 @@ const customerSchema = new Schema({
 
 
 customerSchema.statics.register = async function ({ email, password, full_name }) {
-    const emailExist = await this.findOne({ email })
-    
-    if (emailExist) {
-        throw Error("Email already registered")
-    }
-    
     const passwordSalt = await bcrypt.genSalt(5)
     const passwordHash = await bcrypt.hash(password, passwordSalt)
     
