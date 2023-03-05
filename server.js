@@ -12,6 +12,7 @@ const requestLogger = require("./server/requestLogger")
 
 /** @Routes */
 const registerRoutes = require("./api/Register/registerRoutes")
+const loginRoutes = require("./api/Login/loginRoutes")
 
 /** @Initialization */ 
 const server = express()
@@ -22,6 +23,7 @@ server.get('/', (_, res) => {
     return responseParser({ data: "REST API Kantin UMN", status: 200 }, res)
 })
 server.use("/api/register", registerRoutes)
+server.use("/api/login", loginRoutes)
 
 const WITH_DB = eval(process.env.WITH_DB)
 if (WITH_DB) {

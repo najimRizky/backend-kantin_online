@@ -17,7 +17,7 @@ const customerSchema = new Schema({
         type: String,
         required: true
     },
-    profileImage: {
+    profile_image: {
         type: String,
         default: ""
     },
