@@ -1,6 +1,7 @@
-const reqBodyComplete = (data, field) => {
-    for (let i = 0; i < field.length; i++) {
-        if (!data[field[i]]) {
+const reqBodyComplete = (data, requiredField) => {
+    for (let field of requiredField) {
+        console.log(field)
+        if (!Object.keys(data).includes(field)) {
             return false
         }
     }
