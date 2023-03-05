@@ -17,6 +17,14 @@ const customerSchema = new Schema({
         type: String,
         required: true
     },
+    profileImage: {
+        type: String,
+        default: ""
+    },
+    balance: {
+        type: Number,
+        default: 0
+    },
     confirmed: {
         type: Boolean,
         default: false
@@ -35,9 +43,11 @@ customerSchema.statics.register = async function ({ email, password, full_name }
         throw Error("Email already registered")
     }
     
-    const salt = await bcrypt.genSalt(5)
-    const passwordHash = await bcrypt.hash(password, salt)
-    const confirmationToken = await bcrypt.hash(email, salt)
+    const passwordSalt = await bcrypt.genSalt(5)
+    const passwordHash = await bcrypt.hash(password, passwordSalt)
+    
+    const confirmationTokenSalt = await bcrypt.genSalt(5)
+    const confirmationToken = await bcrypt.hash(email, confirmationTokenSalt)
     
     const dataCustomer = {
         email, 
