@@ -22,7 +22,7 @@ const registerCustomer = async (req, res) => {
             message: "New account created, check your email to confirm your account!" 
         }, res)
     } catch (err) {
-        return responseParser({ status: 400, message: err.message }, res)
+        return responseParser({ status: 400, error: err.message }, res)
     }
 }
 
@@ -35,7 +35,7 @@ const confirmCustomer = async (req, res) => {
         await Customer.updateOne({_id: customer._id}, {$set: {confirmed: true}})
         return res.send("Your email has been confirmed. You may login now.")
     } else {
-        return responseParser({status: 404, message: "Invalid confirmation link"}, res)
+        return responseParser({status: 404, error: "Invalid confirmation link"}, res)
     }
 }
 
