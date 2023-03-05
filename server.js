@@ -11,7 +11,7 @@ const serverListen = require("./server/serverListen")
 const requestLogger = require("./server/requestLogger")
 
 /** @Routes */
-const customerRoutes = require("./api/Customer/customerRoutes")
+const registerRoutes = require("./api/Register/registerRoutes")
 
 /** @Initialization */ 
 const server = express()
@@ -21,7 +21,7 @@ requestLogger(server)
 server.get('/', (_, res) => {
     return responseParser({ data: "REST API Kantin UMN", status: 200 }, res)
 })
-server.use("/api/customer", customerRoutes)
+server.use("/api/register", registerRoutes)
 
 const WITH_DB = eval(process.env.WITH_DB)
 if (WITH_DB) {
