@@ -5,6 +5,11 @@ const Customer = require("../Customer/customerModel")
 const register = async (req, res) => {
     const { email, password, full_name } = req.body
     try {
+        const emailExist = await Customer.findOne({ email })
+        if (emailExist) {
+            throw Error("Email already registered")
+        }
+
         const customer = await Customer.register({ email, password, full_name })
 
         sendEmailConfirmation({
@@ -26,7 +31,7 @@ const register = async (req, res) => {
 }
 
 const confirm = async (req, res) => {
-    const { token } = req.params
+    const { token } = req.query
 
     const customer = await Customer.findOne({ confirmation_token: token })
 

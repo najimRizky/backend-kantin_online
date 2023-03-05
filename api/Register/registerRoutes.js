@@ -8,6 +8,6 @@ const checkValidation = require("../../helper/checkValicdation")
 /** @see /api/register */
 
 router.post("/", validation.register, checkValidation, registerController.register)
-router.get("/confirm/:token", validation.confirm, checkValidation, registerController.confirm)
+router.get("/confirm", validation.confirm, checkValidation, registerController.confirm)
 
 module.exports = router

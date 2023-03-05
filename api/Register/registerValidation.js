@@ -1,4 +1,4 @@
-const { body, param } = require("express-validator")
+const { body, query } = require("express-validator")
 
 const validFullName = /^[A-Z][a-z]*( [A-Z][a-z]*)*([-][A-Z][a-z]*)*$/;
 
@@ -22,7 +22,7 @@ const register = [
 ]
 
 const confirm = [
-    param("token")
+    query("token")
         .exists({ checkFalsy: true })
         .withMessage("Invalid Token")
 ]
