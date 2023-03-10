@@ -13,7 +13,7 @@ import requestLogger from "./server/requestLogger.js"
 /** @Routes */
 import registerRoutes from "./api/Register/registerRoutes.js"
 import loginRoutes from "./api/Login/loginRoutes.js"
-// import uploadRoutes from "./api/Upload/uploadRoutes.js"
+import uploadRoutes from "./api/Upload/uploadRoutes.js"
 
 /** @Initialization */ 
 const server = express()
@@ -25,7 +25,7 @@ server.get('/', (_, res) => {
 })
 server.use("/api/register", registerRoutes)
 server.use("/api/login", loginRoutes)
-// server.use("/api/upload", uploadRoutes)
+server.use("/api/upload", uploadRoutes)
 
 const WITH_DB = eval(process.env.WITH_DB)
 if (WITH_DB) {
