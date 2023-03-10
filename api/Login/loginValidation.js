@@ -1,4 +1,4 @@
-const { body } = require("express-validator")
+import { body } from "express-validator"
 
 const login = [
     body("email")
@@ -10,6 +10,6 @@ const login = [
         .withMessage("Password is required")
 ]
 
-module.exports = {
+export default {
     login,
 }

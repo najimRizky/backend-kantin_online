@@ -1,18 +1,19 @@
-require("dotenv").config()
+import "./config/loadEnv.js"
 
 /** @Library */ 
-const express = require('express')
-const mongoose = require("mongoose")
+import express from "express"
+import mongoose from "mongoose"
 
 /** @Function */ 
-const responseParser = require("./helper/responseParser")
-const connectDatabase = require("./database/connectDatabase") 
-const serverListen = require("./server/serverListen")
-const requestLogger = require("./server/requestLogger")
+import responseParser from "./helper/responseParser.js"
+import connectDatabase from "./database/connectDatabase.js"
+import serverListen from "./server/serverListen.js"
+import requestLogger from "./server/requestLogger.js" 
 
 /** @Routes */
-const registerRoutes = require("./api/Register/registerRoutes")
-const loginRoutes = require("./api/Login/loginRoutes")
+import registerRoutes from "./api/Register/registerRoutes.js"
+import loginRoutes from "./api/Login/loginRoutes.js"
+// import uploadRoutes from "./api/Upload/uploadRoutes.js"
 
 /** @Initialization */ 
 const server = express()
@@ -24,6 +25,7 @@ server.get('/', (_, res) => {
 })
 server.use("/api/register", registerRoutes)
 server.use("/api/login", loginRoutes)
+// server.use("/api/upload", uploadRoutes)
 
 const WITH_DB = eval(process.env.WITH_DB)
 if (WITH_DB) {

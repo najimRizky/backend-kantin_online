@@ -1,5 +1,6 @@
-const nodemailer = require("nodemailer")
-const mailTransporter = require("../config/mailTransporter")
+import nodemailer from "nodemailer"
+import mailTransporter from "../config/mailTransporter.js"
+
 const BASE_URL = process.env.BASE_URL
 
 const sendEmailConfirmation = ({ email, fullName, confirmationToken }) => {
@@ -43,4 +44,4 @@ const sendEmailConfirmation = ({ email, fullName, confirmationToken }) => {
     });
 }
 
-module.exports = sendEmailConfirmation
+export default sendEmailConfirmation

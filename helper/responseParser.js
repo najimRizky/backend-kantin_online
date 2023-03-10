@@ -1,4 +1,4 @@
-const statusParser = require("./statusParser")
+import statusParser from "./statusParser.js"
 
 const responseParser = ({status = 200, data = undefined, error = undefined, message = undefined}, res) => {
     return res.status(status).send({
@@ -8,4 +8,4 @@ const responseParser = ({status = 200, data = undefined, error = undefined, mess
     })
 }
 
-module.exports = responseParser
+export default responseParser

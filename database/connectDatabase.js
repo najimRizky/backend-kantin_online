@@ -1,6 +1,7 @@
+import serverListen from "./../server/serverListen.js"
+import retry from "retry"
+
 const MONGO_DB_URI = process.env.MONGO_DB_URI
-const serverListen = require("./../server/serverListen")
-const retry = require("retry")
 
 const operation = retry.operation({
     retries: 5,
@@ -31,4 +32,4 @@ const connectDatabase = (mongoose, server) => {
     })
 }
 
-module.exports = connectDatabase
+export default connectDatabase

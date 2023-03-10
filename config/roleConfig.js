@@ -3,4 +3,4 @@ const roleConfig = {
     tenant: "tenant"
 }
 
-module.exports = roleConfig
+export default roleConfig

@@ -35,4 +35,4 @@ const statusConfig = {
     500: "Internal Server Error"
 }
 
-module.exports = statusConfig 
+export default statusConfig 

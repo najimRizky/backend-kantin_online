@@ -1,7 +1,8 @@
-const responseParser = require("../../helper/responseParser")
-const sendEmailConfirmation = require("../../server/sendEmailConfirmation")
-const Customer = require("./customerModel")
+import responseParser from "../../helper/responseParser.js"
+import sendEmailConfirmation from "../../server/sendEmailConfirmation.js"
+import Customer from "./customerModel.js"
 
-module.exports = {
-    
+
+export default {
+
 }

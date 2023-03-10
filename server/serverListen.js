@@ -7,4 +7,4 @@ const serverListen = (server) => {
     })
 }
 
-module.exports = serverListen
+export default serverListen

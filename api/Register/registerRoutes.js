@@ -1,13 +1,13 @@
-const express = require("express")
+import express from "express"
 const router = express.Router()
 
-const validation = require("./registerValidation")
-const registerController = require("./registerController")
-const checkValidation = require("../../helper/checkValicdation")
+import registerValidation from "./registerValidation.js"
+import registerController from "./registerController.js"
+import checkValidation from "../../helper/checkValidation.js"
 
 /** @see /api/register */
 
-router.post("/", validation.register, checkValidation, registerController.register)
-router.get("/confirm", validation.confirm, checkValidation, registerController.confirm)
+router.post("/", registerValidation.register, checkValidation, registerController.register)
+router.get("/confirm", registerValidation.confirm, checkValidation, registerController.confirm)
 
-module.exports = router
+export default router

@@ -1,5 +1,5 @@
-const { validationResult } = require("express-validator")
-const responseParser = require("./responseParser")
+import { validationResult } from "express-validator"
+import responseParser from "./responseParser.js"
 
 const checkValidation = (req, res, next) => {
     const errors = validationResult(req)
@@ -9,4 +9,4 @@ const checkValidation = (req, res, next) => {
     next()
 }
 
-module.exports = checkValidation
+export default checkValidation

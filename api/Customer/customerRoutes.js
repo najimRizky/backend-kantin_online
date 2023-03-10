@@ -1,11 +1,10 @@
-const express = require("express")
-const router = express.Router()
-const customerValidation = require("./customerValidation")
+import express from "express"
+import customerValidation from "./customerValidation.js"
+import customerController from "./customerController.js"
+import checkValidation from "../../helper/checkValidation.js"
 
-const customerController = require("./customerController")
-const checkValidation = require("../../helper/checkValicdation")
+const router = express.Router()
 
 /** @see /api/customer */
 
-
-module.exports = router
+export default router

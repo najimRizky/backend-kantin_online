@@ -12,4 +12,4 @@ const mailTransporter = {
     }
 }
 
-module.exports = mailTransporter
+export default mailTransporter

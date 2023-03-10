@@ -1,4 +1,4 @@
-const statusConfig = require("./../config/statusConfig")
+import statusConfig from "./../config/statusConfig.js"
 
 const statusParser = (status, message) => {
     return {
@@ -7,4 +7,4 @@ const statusParser = (status, message) => {
     }
 }
 
-module.exports = statusParser
+export default statusParser

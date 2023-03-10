@@ -1,6 +1,6 @@
-const responseParser = require("../../helper/responseParser")
-const sendEmailConfirmation = require("../../server/sendEmailConfirmation")
-const Customer = require("../Customer/customerModel")
+import responseParser from "../../helper/responseParser.js"
+import sendEmailConfirmation from "../../server/sendEmailConfirmation.js"
+import Customer from "../Customer/customerModel.js"
 
 const register = async (req, res) => {
     const { email, password, full_name } = req.body
@@ -47,7 +47,7 @@ const confirm = async (req, res) => {
     }
 }
 
-module.exports = {
+export default {
     register,
     confirm
 }

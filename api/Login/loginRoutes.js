@@ -1,12 +1,12 @@
-const express = require("express")
+import express from "express"
 const router = express.Router()
 
-const loginvalidation = require("./loginValidation")
-const loginController = require("./loginController")
-const checkValidation = require("../../helper/checkValicdation")
+import loginvalidation from "./loginValidation.js"
+import loginController from "./loginController.js"
+import checkValidation from "../../helper/checkValidation.js"
 
 /** @see /api/login */
 
 router.post("/", loginvalidation.login, checkValidation, loginController.login)
 
-module.exports = router
+export default router

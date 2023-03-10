@@ -5,4 +5,4 @@ const requestLogger = (server) => {
     })
 }
 
-module.exports = requestLogger
+export default requestLogger

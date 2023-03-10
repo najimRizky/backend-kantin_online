@@ -1,8 +1,8 @@
-const responseParser = require("../../helper/responseParser")
-const Customer = require("../Customer/customerModel")
-const bcrypt = require("bcrypt");
-const createJWT = require("../../helper/createJWT");
-const roleConfig = require("../../config/roleConfig");
+import responseParser from "../../helper/responseParser.js";
+import Customer from "../Customer/customerModel.js";
+import bcrypt from "bcrypt"
+import createJWT from "../../helper/createJWT.js";
+import roleConfig from "../../config/roleConfig.js";
 
 const login = async (req, res) => {
     const { email, password } = req.body;
@@ -50,6 +50,6 @@ const customerLogin = async ({ password, customer }) => {
 
 // }
 
-module.exports = {
+export default {
     login,
 }

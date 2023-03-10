@@ -1,4 +1,4 @@
-const { body, query } = require("express-validator")
+import { body, query } from "express-validator"
 
 const validFullName = /^[A-Z][a-z]*( [A-Z][a-z]*)*([-][A-Z][a-z]*)*$/;
 
@@ -27,7 +27,7 @@ const confirm = [
         .withMessage("Invalid Token")
 ]
 
-module.exports = {
+export default {
     register,
     confirm
 }

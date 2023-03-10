@@ -1,5 +1,5 @@
-const mongoose = require("mongoose");
-const bcrypt = require("bcrypt")
+import mongoose from "mongoose";
+import bcrypt from "bcrypt"
 
 const Schema = mongoose.Schema
 
@@ -55,4 +55,4 @@ customerSchema.statics.register = async function ({ email, password, full_name }
     return customer
 }
 
-module.exports = mongoose.model("Customer", customerSchema)
+export default mongoose.model("Customer", customerSchema)

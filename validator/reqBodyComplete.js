@@ -8,4 +8,4 @@ const reqBodyComplete = (data, requiredField) => {
     return true
 }
 
-module.exports = reqBodyComplete
+export default reqBodyComplete
