@@ -15,6 +15,7 @@ import registerRoutes from "./api/Register/registerRoutes.js"
 import loginRoutes from "./api/Login/loginRoutes.js"
 import uploadRoutes from "./api/Upload/uploadRoutes.js"
 import customerRoutes from "./api/Customer/customerRoutes.js"
+import accountRoutes from "./api/Account/accountRoutes.js"
 
 /** @Initialization */ 
 const server = express()
@@ -29,6 +30,7 @@ server.use("/register", registerRoutes)
 server.use("/login", loginRoutes)
 server.use("/upload", uploadRoutes)
 server.use("/customer", customerRoutes)
+server.use("/account", accountRoutes)
 
 const WITH_DB = eval(process.env.WITH_DB)
 if (WITH_DB) {

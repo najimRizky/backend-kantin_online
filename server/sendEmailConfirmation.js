@@ -5,7 +5,7 @@ const BASE_URL = process.env.BASE_URL
 
 const sendEmailConfirmation = ({ email, fullName, confirmationToken }) => {
     const transporter = nodemailer.createTransport(mailTransporter)
-    const confirmationLink = `${BASE_URL}/register/confirm?token=${confirmationToken}`
+    const confirmationLink = `${BASE_URL}/account/confirm?token=${confirmationToken}`
     const mailOptions = {
         to: email,
         subject: "Kantin UMN Email Confirmation",
