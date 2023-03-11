@@ -10,6 +10,18 @@ const router = express.Router()
 
 router.use(requireAuth)
 
+router.get(
+    "/profile",
+    customerController.getProfile
+)
+
+router.post(
+    "/balance",
+    customerValidation.updateBalance,
+    checkValidation,
+    customerController.updateBalance,
+)
+
 router.put(
     "/profile",
     customerValidation.uploadValidation,
@@ -17,5 +29,4 @@ router.put(
     checkValidation,
     customerController.editProfile
 )
-
 export default router

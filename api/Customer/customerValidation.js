@@ -29,7 +29,16 @@ const editProfile = [
         }),
 ]
 
+const updateBalance = [
+    body("amount")
+        .exists({ checkFalsy: true })
+        .withMessage("Amount is required")
+        .isFloat({ min: 0 })
+        .withMessage("Minumum amount is 0")
+]
+
 export default {
     editProfile,
-    uploadValidation
+    uploadValidation,
+    updateBalance
 }
