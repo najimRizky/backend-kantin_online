@@ -19,7 +19,7 @@ const uploadToBucket = async ({ req, currentUrl }) => {
     const params = {
         ...BucketParams,
         Body: fs.createReadStream(path),
-        Key: `${uniqueFileName}`
+        Key: `${uniqueFileName}.${extension}`
     }
 
     return new Promise((resolve, reject) => {
@@ -29,7 +29,7 @@ const uploadToBucket = async ({ req, currentUrl }) => {
             }
             if (data) {
                 fs.unlinkSync(path); // delete
-                const url = `${CLOUDFLARE_PUBLIC_BUCKET_URL}/${data.Key}.${extension}`;
+                const url = `${CLOUDFLARE_PUBLIC_BUCKET_URL}/${data.Key}`;
                 resolve(url)
             }
         });
