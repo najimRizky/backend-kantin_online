@@ -23,9 +23,9 @@ requestLogger(server)
 server.get('/', (_, res) => {
     return responseParser({ data: "REST API Kantin UMN", status: 200 }, res)
 })
-server.use("/api/register", registerRoutes)
-server.use("/api/login", loginRoutes)
-server.use("/api/upload", uploadRoutes)
+server.use("/register", registerRoutes)
+server.use("/login", loginRoutes)
+server.use("/upload", uploadRoutes)
 
 const WITH_DB = eval(process.env.WITH_DB)
 if (WITH_DB) {

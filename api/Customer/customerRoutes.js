@@ -5,6 +5,6 @@ import checkValidation from "../../helper/checkValidation.js"
 
 const router = express.Router()
 
-/** @see /api/customer */
+/** @see /customer */
 
 export default router

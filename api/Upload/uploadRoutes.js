@@ -11,7 +11,7 @@ const S3 = new AWS.S3(BucketConfig)
 const CLOUDFLARE_PUBLIC_BUCKET_URL = process.env.CLOUDFLARE_PUBLIC_BUCKET_URL
 
 
-/** @see /api/upload */
+/** @see /upload */
 
 router.post('/', upload.single("images"), async (req, res) => {
     const path = req.file.path
