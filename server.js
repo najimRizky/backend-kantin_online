@@ -19,6 +19,7 @@ import customerRoutes from "./api/Customer/customerRoutes.js"
 /** @Initialization */ 
 const server = express()
 server.use(express.json())
+server.set('view engine', 'ejs');
 requestLogger(server)
 
 server.get('/', (_, res) => {
