@@ -1,6 +1,6 @@
 import { body, query } from "express-validator"
 
-const validFullName = /^[A-Z][a-z]*( [A-Z][a-z]*)*([-][A-Z][a-z]*)*$/;
+import validFullName from "../../config/validFullName.js"
 
 const register = [
     body("email")
@@ -11,7 +11,7 @@ const register = [
         .exists({ checkFalsy: true })
         .withMessage("Full Name is required")
         .custom((value) => {
-            if (!validFullName.test(value)) throw new Error("tes")
+            if (!validFullName.test(value)) throw new Error("Invalid Full Name")
             return true
         }),
     body("password")

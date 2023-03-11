@@ -35,7 +35,7 @@ const customerLogin = async ({ password, customer }) => {
     if (!match) {
         throw Error
     }
-    const jwt = createJWT(customer._id)
+    const jwt = createJWT({_id: customer._id, role: roleConfig.customer, email: customer.email})
 
     return {
         email: customer.email,

@@ -14,6 +14,7 @@ import requestLogger from "./server/requestLogger.js"
 import registerRoutes from "./api/Register/registerRoutes.js"
 import loginRoutes from "./api/Login/loginRoutes.js"
 import uploadRoutes from "./api/Upload/uploadRoutes.js"
+import customerRoutes from "./api/Customer/customerRoutes.js"
 
 /** @Initialization */ 
 const server = express()
@@ -26,6 +27,7 @@ server.get('/', (_, res) => {
 server.use("/register", registerRoutes)
 server.use("/login", loginRoutes)
 server.use("/upload", uploadRoutes)
+server.use("/customer", customerRoutes)
 
 const WITH_DB = eval(process.env.WITH_DB)
 if (WITH_DB) {
