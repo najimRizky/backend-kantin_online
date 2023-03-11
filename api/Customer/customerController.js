@@ -31,9 +31,12 @@ const getProfile = async (req, res) => {
 const updateBalance = async (req, res) => {
     try {
         const { amount } = req.body
-        const customerId = req.user._id
-        const customer = await Customer.findOneAndUpdate({ _id: customerId }, { $inc: { balance: amount } })
-        return responseParser({ status: 200, data: { balance: customer.balance } }, res)
+        const { _id } = req.user
+        
+        await Customer.updateOne({ _id }, { $inc: { balance: amount } })
+        const updatedCustomer = await Customer.findById(_id)
+        
+        return responseParser({ status: 200, data: { balance: updatedCustomer.balance } }, res)
     } catch (err) {
         return responseParser({ status: 404 }, res)
     }
