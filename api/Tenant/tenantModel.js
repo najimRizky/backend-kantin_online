@@ -3,17 +3,25 @@ import mongoose from "mongoose";
 const Schema = mongoose.Schema
 
 const tenantSchema = new Schema({
-    name: {
+    email: {
         type: String,
         required: true,
     },
-    email: {
+    full_name: {
         type: String,
         required: true,
     },
     password: {
         type: String,
         required: true,
+    },
+    description: {
+        type: String,
+        default: ""
+    },
+    location: {
+        type: String,
+        default: ""
     },
     menus: [{
         type: Schema.Types.ObjectId,
@@ -23,20 +31,40 @@ const tenantSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "Review"
     }],
+    orders: [{
+        type: Schema.Types.ObjectId,
+        rev: "Order"
+    }],
     avg_score: {
         type: Number,
-        required: true
+        default: 0
     },
-    image: {
+    profile_image: {
         type: String,
         default: ""
     },
     balance: {
         type: Number,
         default: 0
+    },
+    is_open: {
+        type: Boolean,
+        default: true
     }
-    
 
 }, { timestamps: true })
+
+
+tenantSchema.statics.register = async function ({ email, password, full_name }) {
+    const dataTenant = {
+        email,
+        full_name,
+        password,
+    }
+
+    const newTenant = await this.create(dataTenant)
+
+    return newTenant
+}
 
 export default mongoose.model("Tenant", tenantSchema)
