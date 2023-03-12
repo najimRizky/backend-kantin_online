@@ -93,6 +93,7 @@ const register = async (req, res) => {
     }
 }
 
+// customer only
 const confirm = async (req, res) => {
     const { token } = req.query
 
