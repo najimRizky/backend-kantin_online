@@ -17,7 +17,7 @@ const editProfile = async (req, res) => {
             data.profile_image = url
         }
 
-        await Tenant.updateOne(data)
+        await Tenant.findByIdAndUpdate(_id, data)
         return responseParser({ status: 200 }, res)
     } catch (err) {
         console.log(err)

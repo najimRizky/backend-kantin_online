@@ -7,14 +7,16 @@ const editProfile = async (req, res) => {
     try {
         const { _id } = req.user
         const { full_name } = req.body
-        const {profile_image} = await Customer.findById(_id, ["profile_image"])
+        const { profile_image } = await Customer.findById(_id, ["profile_image"])
+
+        const data = { full_name }
 
         if (req.file) {
             const url = await uploadToBucket({ req, currentUrl: profile_image })
-            await Customer.updateOne({ _id, full_name, profile_image: url })
-        } else {
-            await Customer.updateOne({ _id, full_name })
+            data.profile_image =  url
         }
+
+        await Customer.findByIdAndUpdate(_id, data)
         return responseParser({ status: 200 }, res)
     } catch (err) {
         console.log(err)
@@ -37,7 +39,7 @@ const updateBalance = async (req, res) => {
         const { amount } = req.body
         const { _id } = req.user
 
-        await Customer.updateOne({ _id }, { $inc: { balance: amount } })
+        await Customer.findByIdAndUpdate(_id, {$inc: {balance: amount}})        
         const updatedCustomer = await Customer.findById(_id)
 
         return responseParser({ status: 200, data: { balance: updatedCustomer.balance } }, res)

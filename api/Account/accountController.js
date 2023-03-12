@@ -97,13 +97,13 @@ const register = async (req, res) => {
 const confirm = async (req, res) => {
     const { token } = req.query
 
-    const customer = await Customer.findOne({ confirmation_token: token })
+    const {_id} = await Customer.findOne({ confirmation_token: token })
 
     if (customer) {
         if (customer.confirmed) {
             return res.send("Your account already confirmed.")
         } else {
-            await Customer.updateOne({ _id: customer._id }, { $set: { confirmed: true } })
+            await Customer.findByIdAndUpdate(_id, {confirmed: true})
             return res.send("Account confirmation success! You may login now.")
         }
     } else {
