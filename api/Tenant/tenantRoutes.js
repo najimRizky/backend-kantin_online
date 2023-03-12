@@ -15,6 +15,13 @@ router.post(
     tenantController.register
 )
 
+router.get(
+    "/:_id",
+    tenantValidation.getDetail,
+    checkValidation,
+    tenantController.getDetail
+)
+
 router.use(requireAuth)
 
 router.get(

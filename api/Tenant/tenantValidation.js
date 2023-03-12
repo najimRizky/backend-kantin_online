@@ -1,4 +1,4 @@
-import { body } from "express-validator"
+import { body, param } from "express-validator"
 import multer from "multer"
 import uploadConfig from "../../config/uploadConfig.js"
 import validTenantName from "../../config/validTenantName.js"
@@ -56,8 +56,16 @@ const register = [
         .withMessage("Password min length")
 ]
 
+const getDetail = [
+    param("_id")
+        .exists({ checkFalsy: true })
+        .isMongoId()
+        .withMessage("Invalid parameter")
+]
+
 export default {
     editProfile,
     uploadValidation,
-    register
+    register,
+    getDetail
 }

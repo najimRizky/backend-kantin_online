@@ -71,4 +71,9 @@ tenantSchema.statics.register = async function ({ email, password, full_name }) 
     return newTenant
 }
 
+tenantSchema.statics.addMenu = async function ({_id, newMenuId}) {
+    await this.findByIdAndUpdate(_id, {$addToSet: {menus: mongoose.Types.ObjectId(newMenuId)}})
+    return true
+}
+
 export default mongoose.model("Tenant", tenantSchema)

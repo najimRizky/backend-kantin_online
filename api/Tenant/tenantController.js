@@ -68,8 +68,24 @@ const getProfile = async (req, res) => {
     }
 }
 
+const getDetail = async (req, res) => {
+    try {
+        const { _id } = req.params
+
+        const tenant = await Tenant.findById(_id)
+            .populate("menus", {"tenant": 0})
+
+        if (!tenant) throw Error
+
+        return responseParser({ status: 200, data: tenant }, res)
+    } catch (err) {
+        return responseParser({ status: 404 }, res)
+    }
+}
+
 export default {
     editProfile,
     getProfile,
-    register
+    register,
+    getDetail
 }
