@@ -35,6 +35,10 @@ const tenantSchema = new Schema({
         type: Schema.Types.ObjectId,
         rev: "Order"
     }],
+    menu_categories: [{
+        type: Schema.Types.ObjectId,
+        ref: "Menu_Category",
+    }],
     avg_score: {
         type: Number,
         default: 0
