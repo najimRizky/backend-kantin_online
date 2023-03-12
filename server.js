@@ -20,7 +20,7 @@ import tenantRoutes from "./api/Tenant/tenantRoutes.js"
 const server = express()
 server.use(express.json())
 server.set('view engine', 'ejs');
-requestLogger(server)
+server.use(requestLogger)
 
 server.get('/', (_, res) => {
     return responseParser({ data: "REST API Kantin UMN", status: 200 }, res)
