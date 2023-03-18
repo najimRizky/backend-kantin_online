@@ -1,6 +1,7 @@
 const roleConfig = {
     customer: "customer",
-    tenant: "tenant"
+    tenant: "tenant",
+    admin: "admin"
 }
 
 export default roleConfig
