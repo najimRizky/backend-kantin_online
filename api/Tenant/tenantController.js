@@ -72,8 +72,39 @@ const getDetail = async (req, res) => {
     try {
         const { _id } = req.params
 
-        const tenant = await Tenant.findById(_id)
-            .populate("menus", {"tenant": 0})
+        const tenant = await Tenant
+            .findById(_id, [
+                "profile_image",
+                "full_name",
+                "description",
+                "label",
+                "avg_score",
+                "location",
+                "is_open",
+                "menus"
+            ])
+            .populate("menus", {
+                "tenant": 0,
+            })
+
+        if (!tenant) throw Error
+
+        return responseParser({ status: 200, data: tenant }, res)
+    } catch (err) {
+        return responseParser({ status: 404 }, res)
+    }
+}
+const getAll = async (_, res) => {
+    try {
+        const tenant = await Tenant.find({}, [
+            "profile_image",
+            "full_name",
+            "description",
+            "label",
+            "avg_score",
+            "location",
+            "is_open",
+        ])
 
         if (!tenant) throw Error
 
@@ -87,5 +118,6 @@ export default {
     editProfile,
     getProfile,
     register,
-    getDetail
+    getDetail,
+    getAll
 }

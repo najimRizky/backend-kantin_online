@@ -16,6 +16,11 @@ router.post(
 )
 
 router.get(
+    "/",
+    tenantController.getAll
+)
+
+router.get(
     "/:_id",
     tenantValidation.getDetail,
     checkValidation,
