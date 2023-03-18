@@ -3,6 +3,7 @@ import "./config/loadEnv.js"
 /** @Library */ 
 import express from "express"
 import mongoose from "mongoose"
+import cors from "cors"
 
 /** @Function */ 
 import responseParser from "./helper/responseParser.js"
@@ -22,6 +23,7 @@ const server = express()
 server.use(express.json())
 server.set('view engine', 'ejs');
 server.use(requestLogger)
+server.use(cors())
 
 server.get('/', (_, res) => {
     return responseParser({ data: "REST API Kantin UMN", status: 200 }, res)
