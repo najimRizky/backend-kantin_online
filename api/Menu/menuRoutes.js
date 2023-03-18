@@ -3,6 +3,8 @@ import menuValidation from "./menuValidation.js"
 import menuController from "./menuController.js"
 import checkValidation from "../../helper/checkValidation.js"
 import requireAuth from "../../validation/requireAuth.js"
+import roleConfig from "../../config/roleConfig.js"
+import checkRole from "../../validation/checkRole.js"
 
 const router = express.Router()
 
@@ -16,6 +18,7 @@ router.get(
 )
 
 router.use(requireAuth)
+router.use(checkRole(roleConfig.tenant))
 
 router.post(
     "/",

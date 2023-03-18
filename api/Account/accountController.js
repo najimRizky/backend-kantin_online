@@ -53,7 +53,7 @@ const tenantLogin = async ({ password, tenant }) => {
     if (!match) {
         throw Error
     }
-    const jwt = createJWT({ _id: tenant._id, role: roleConfig.customer, email: tenant.email })
+    const jwt = createJWT({ _id: tenant._id, role: roleConfig.tenant, email: tenant.email })
 
     return {
         email: tenant.email,

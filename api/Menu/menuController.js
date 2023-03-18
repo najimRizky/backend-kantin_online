@@ -27,8 +27,7 @@ const editMenu = async (req, res) => {
         }
 
         await Menu.findByIdAndUpdate(menuId, data, { tenant: _id })
-
-        return responseParser({ status: 200, data: newMenu }, res)
+        return responseParser({ status: 200 }, res)
     } catch (err) {
         return responseParser({ status: 404 }, res)
     }
