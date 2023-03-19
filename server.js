@@ -17,6 +17,7 @@ import customerRoutes from "./api/Customer/customerRoutes.js"
 import accountRoutes from "./api/Account/accountRoutes.js"
 import tenantRoutes from "./api/Tenant/tenantRoutes.js"
 import menuRoutes from "./api/Menu/menuRoutes.js"
+import otherRoutes from "./api/Other/otherRoutes.js"
 
 /** @Initialization */ 
 const server = express()
@@ -28,6 +29,7 @@ server.use(cors())
 server.get('/', (_, res) => {
     return responseParser({ data: "REST API Kantin UMN", status: 200 }, res)
 })
+server.use("/", otherRoutes)
 server.use("/upload", uploadRoutes)
 server.use("/customer", customerRoutes)
 server.use("/account", accountRoutes)
