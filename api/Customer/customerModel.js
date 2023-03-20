@@ -32,26 +32,44 @@ const customerSchema = new Schema({
     confirmation_token: {
         type: String,
         required: true,
-    }
+    },
+    carts: [{
+        tenant: {
+            type: Schema.Types.ObjectId,
+            ref: "Tenant",
+            required: true
+        },
+        item: [{
+            menu: {
+                type: Schema.Types.ObjectId,
+                ref: "Menu",
+                required: true
+            },
+            quantity: {
+                type: Number,
+                required: true
+            }
+        }]
+    }],
 }, { timestamps: true })
 
 
 customerSchema.statics.register = async function ({ email, password, full_name }) {
     const passwordSalt = await bcrypt.genSalt(5)
     const passwordHash = await bcrypt.hash(password, passwordSalt)
-    
+
     const confirmationTokenSalt = await bcrypt.genSalt(5)
     const confirmationToken = await bcrypt.hash(email, confirmationTokenSalt)
-    
+
     const dataCustomer = {
-        email, 
+        email,
         password: passwordHash,
         full_name,
         confirmation_token: confirmationToken
     }
-    
+
     const customer = await this.create(dataCustomer)
-    
+
     return customer
 }
 
