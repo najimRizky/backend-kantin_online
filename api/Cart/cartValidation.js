@@ -1,49 +1,65 @@
-import { body, query } from "express-validator"
+import { body, param } from "express-validator"
 
-const addCart = [
-    body("tenant_id")
+const TENANT_ID = body("tenant_id")
+    .exists({ checkFalsy: true })
+    .withMessage("Tenant_id is required")
+    .isMongoId()
+    .withMessage("Invalid Tenant Id")
+
+
+const MENU_ID = body("menu_id")
+    .exists({ checkFalsy: true })
+    .withMessage("Menu_id is required")
+    .isMongoId()
+    .withMessage("Invalid Menu Id")
+
+
+const QUANTITY = body("quantity")
+    .exists({ checkFalsy: true })
+    .withMessage("Quantity is required")
+    .isInt({ min: 1 })
+    .withMessage("Minimum quantity is 1")
+
+
+const CART_ID = [
+    param("_id")
         .exists({ checkFalsy: true })
-        .withMessage("Tenant is required")
+        .withMessage("Cart Id is required")
         .isMongoId()
-        .withMessage("Invalid Id"),
-    body("menu_id")
-        .exists({ checkFalsy: true })
-        .withMessage("Menu")
-        .isMongoId()
-        .withMessage("Invalid Id"),
-    body("quantity")
-        .exists({ checkFalsy: true })
-        .isInt({ min: 1 })
-        .withMessage("Quantity is required with minimum quantity is 1")
+        .withMessage("Invalid Cart Id"),
 ]
 
-const subtractCart = [
-    body("tenant_id")
-        .exists({ checkFalsy: true })
-        .withMessage("Tenant is required")
-        .isMongoId()
-        .withMessage("Invalid Id"),
-    body("menu_id")
-        .exists({ checkFalsy: true })
-        .withMessage("Menu")
-        .isMongoId()
-        .withMessage("Invalid Id"),
-    body("quantity")
-        .exists({ checkFalsy: true })
-        .isInt({ min: 1 })
-        .withMessage("Quantity is required with minimum quantity is 1")
+const addItem = [
+    TENANT_ID,
+    MENU_ID,
+    QUANTITY,
 ]
 
-const deleteCart = [
-    body("tenant_id")
-        .exists({ checkFalsy: true })
-        .withMessage("Tenant is required")
-        .isMongoId()
-        .withMessage("Invalid Id"),
+const updateItem = [
+    CART_ID,
+    TENANT_ID,
+    MENU_ID,
+    QUANTITY,
+]
+
+const removeItem = [
+    CART_ID,
+    TENANT_ID,
+    MENU_ID,
+]
+
+const clearCart = [
+    CART_ID,
+]
+
+const getCart = [
+    CART_ID,
 ]
 
 export default {
-    addCart,
-    subtractCart,
-    deleteCart,
+    addItem,
+    updateItem,
+    removeItem,
+    clearCart,
+    getCart,
 }

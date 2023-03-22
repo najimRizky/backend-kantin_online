@@ -13,23 +13,50 @@ const router = express.Router()
 router.use(requireAuth)
 router.use(checkRole(roleConfig.customer))
 
+/** @ADD_ITEM */
 router.post(
-    "/add",
-    cartValidation.addCart,
+    "/",
+    cartValidation.addItem,
     checkValidation,
-    cartController.addCart
+    cartController.addItem
 )
 
-router.post(
-    "/subtract",
-    cartValidation.subtractCart,
+/** @UPDATE_ITEM */
+router.patch(
+    "/:_id",
+    cartValidation.updateItem,
     checkValidation,
-    cartController.subtractCart
+    cartController.updateItem
 )
 
+/** @REMOVE_ITEM */
 router.delete(
-    "/delete",
-    cartValidation.deleteCart,
+    "/:_id",
+    cartValidation.removeItem,
     checkValidation,
-    cartController.deleteCart
+    cartController.removeItem
 )
+
+/** @CLEAR_CART */
+router.delete(
+    "/clear/:_id",
+    cartValidation.clearCart,
+    checkValidation,
+    cartController.clearCart
+)
+
+/** @GET_SINGLE_CART */
+router.get(
+    "/:_id",
+    cartValidation.getCart,
+    checkValidation,
+    cartController.getCart
+)
+
+/** @GET_ALL_CART */
+router.get(
+    "/",
+    cartController.getAllCart
+)
+
+export default router

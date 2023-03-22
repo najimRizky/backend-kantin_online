@@ -33,24 +33,6 @@ const customerSchema = new Schema({
         type: String,
         required: true,
     },
-    carts: [{
-        tenant: {
-            type: Schema.Types.ObjectId,
-            ref: "Tenant",
-            required: true
-        },
-        item: [{
-            menu: {
-                type: Schema.Types.ObjectId,
-                ref: "Menu",
-                required: true
-            },
-            quantity: {
-                type: Number,
-                required: true
-            }
-        }]
-    }],
 }, { timestamps: true })
 
 
