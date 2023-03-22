@@ -3,7 +3,6 @@ import nullRefIdParser from "../../config/nullRefIdParser.js"
 import responseParser from "../../helper/responseParser.js"
 import uploadToBucket from "../../helper/uploadToBucket.js"
 import Menu from "./menuModel.js"
-import Tenant from "./../Tenant/tenantModel.js"
 
 const editMenu = async (req, res) => {
     try {
@@ -46,12 +45,10 @@ const getDetail = async (req, res) => {
 }
 
 const addMenu = async (req, res) => {
-    const session = await mongoose.startSession()
-    session.startTransaction()
-
     try {
         const { _id } = req.user
         const { title, description, category, price, prep_duration } = req.body
+        
         const data = {
             title,
             description,
@@ -67,16 +64,9 @@ const addMenu = async (req, res) => {
         }
 
         const newMenu = await Menu.addMenu(_id, data)
-        await Tenant.addMenu({ _id, newMenuId: newMenu._id })
-
-        await session.commitTransaction()
-
         return responseParser({ status: 200, data: newMenu }, res)
     } catch (err) {
-        await session.abortTransaction();
         return responseParser({ status: 400 }, res)
-    } finally {
-        session.endSession()
     }
 }
 

@@ -2,6 +2,7 @@ import responseParser from "../../helper/responseParser.js"
 import uploadToBucket from "../../helper/uploadToBucket.js"
 import Tenant from "./tenantModel.js"
 import Customer from "../Customer/customerModel.js";
+import Menu from "../Menu/menuModel.js";
 import bcrypt from "bcrypt"
 
 const editProfile = async (req, res) => {
@@ -81,15 +82,21 @@ const getDetail = async (req, res) => {
                 "avg_score",
                 "location",
                 "is_open",
-                "menus"
             ])
-            .populate("menus", {
-                "tenant": 0,
-            })
 
         if (!tenant) throw Error
 
-        return responseParser({ status: 200, data: tenant }, res)
+        const menu = await Menu.find({ tenant: _id }, [
+            "title",
+            "description",
+            "category",
+            "image",
+            "price"
+        ])
+
+        const respData = await { ...tenant._doc, menu }
+
+        return responseParser({ status: 200, data: respData }, res)
     } catch (err) {
         return responseParser({ status: 404 }, res)
     }

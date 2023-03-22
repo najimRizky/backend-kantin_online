@@ -23,10 +23,6 @@ const tenantSchema = new Schema({
         type: String,
         default: ""
     },
-    menus: [{
-        type: Schema.Types.ObjectId,
-        ref: "Menu"
-    }],
     reviews: [{
         type: Schema.Types.ObjectId,
         ref: "Review"
