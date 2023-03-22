@@ -36,4 +36,11 @@ router.put(
     menuController.editMenu
 )
 
+router.delete(
+    "/:_id",
+    menuValidation.deleteMenu,
+    checkValidation,
+    menuController.deleteMenu
+)
+
 export default router

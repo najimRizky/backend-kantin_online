@@ -44,11 +44,25 @@ const getDetail = async (req, res) => {
     }
 }
 
+const deleteMenu = async (req, res) => {
+    try {
+        const { _id } = req.params
+
+        const menu = await Menu.findByIdAndDelete(_id)
+
+        if(!menu) throw Error
+        
+        return responseParser({ status: 200 }, res)
+    } catch (err) {
+        return responseParser({ status: 404 }, res)
+    }
+}
+
 const addMenu = async (req, res) => {
     try {
         const { _id } = req.user
         const { title, description, category, price, prep_duration } = req.body
-        
+
         const data = {
             title,
             description,
@@ -73,5 +87,6 @@ const addMenu = async (req, res) => {
 export default {
     editMenu,
     getDetail,
-    addMenu
+    addMenu,
+    deleteMenu
 }

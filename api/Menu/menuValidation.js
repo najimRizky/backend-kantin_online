@@ -51,9 +51,14 @@ const getDetail = [
         .withMessage("Invalid parameter")
 ]
 
+const deleteMenu = [
+    ...getDetail
+]
+
 export default {
     uploadValidation,
     editMenu,
     addMenu,
-    getDetail
+    getDetail,
+    deleteMenu
 }
