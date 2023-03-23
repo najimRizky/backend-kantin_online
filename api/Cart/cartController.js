@@ -4,26 +4,26 @@ import Cart from "./cartModel.js"
 
 const addItem = async (req, res) => {
     try {
-        const userId = req.user._id
+        const customer_id = req.user._id
         const { tenant_id } = req.params
         const { menu_id, quantity } = req.body
 
         const cart = await Cart.findOne({
             tenant: tenant_id,
-            customer: userId,
+            customer: customer_id,
         })
 
         if (cart) {
             const cartTenant = await Cart.findOne({
                 tenant: tenant_id,
-                customer: userId,
+                customer: customer_id,
                 "items.menu": menu_id
             })
 
             if (cartTenant) {
                 await Cart.updateOne({
                     tenant: tenant_id,
-                    customer: userId,
+                    customer: customer_id,
                     "items.menu": menu_id,
                 }, {
                     $inc: { "items.$.quantity": quantity }
@@ -31,7 +31,7 @@ const addItem = async (req, res) => {
             } else {
                 await Cart.updateOne({
                     tenant: tenant_id,
-                    customer: userId,
+                    customer: customer_id,
                 }, {
                     $push: { "items": { menu: mongoose.Types.ObjectId(menu_id), quantity: quantity } }
                 })
@@ -39,7 +39,7 @@ const addItem = async (req, res) => {
         } else {
             await Cart.create({
                 tenant: tenant_id,
-                customer: userId,
+                customer: customer_id,
                 items: [{
                     menu: menu_id,
                     quantity: quantity
@@ -55,13 +55,13 @@ const addItem = async (req, res) => {
 
 const updateItem = async (req, res) => {
     try {
-        const userId = req.user._id
+        const customer_id = req.user._id
         const { tenant_id } = req.params
         const { menu_id, quantity } = req.body
 
         await Cart.updateOne({
             tenant: tenant_id,
-            customer: userId,
+            customer: customer_id,
             "items.menu": menu_id
         }, {
             $set: { "items.$.quantity": quantity }
@@ -69,14 +69,14 @@ const updateItem = async (req, res) => {
 
         const updatedCart = await Cart.findOne({
             tenant: tenant_id,
-            customer: userId,
+            customer: customer_id,
             "items.menu": menu_id
         })
 
         if (updatedCart.items[0].quantity === 0) {
             await Cart.updateOne({
                 tenant: tenant_id,
-                customer: userId,
+                customer: customer_id,
                 "items.menu": menu_id
             }, {
                 $pull: { items: { menu: menu_id } }
@@ -85,13 +85,13 @@ const updateItem = async (req, res) => {
 
         const updatedCart2 = await Cart.findOne({
             tenant: tenant_id,
-            customer: userId,
+            customer: customer_id,
         }, ["items"])
 
         if (updatedCart2.items.length === 0) {
             await Cart.deleteOne({
                 tenant: tenant_id,
-                customer: userId
+                customer: customer_id
             })
         }
 
@@ -103,13 +103,13 @@ const updateItem = async (req, res) => {
 
 const removeItem = async (req, res) => {
     try {
-        const userId = req.user._id
+        const customer_id = req.user._id
         const { tenant_id } = req.params
         const { menu_id } = req.body
 
         await Cart.updateOne({
             tenant: tenant_id,
-            customer: userId,
+            customer: customer_id,
             "items.menu": menu_id
         }, {
             $pull: { items: { menu: menu_id } }
@@ -117,13 +117,13 @@ const removeItem = async (req, res) => {
 
         const updatedCart = await Cart.findOne({
             tenant: tenant_id,
-            customer: userId,
+            customer: customer_id,
         }, ["items"])
 
         if (updatedCart.items.length === 0) {
             await Cart.deleteOne({
                 tenant: tenant_id,
-                customer: userId
+                customer: customer_id
             })
         }
 
@@ -135,11 +135,11 @@ const removeItem = async (req, res) => {
 
 const clearCart = async (req, res) => {
     try {
-        const userId = req.user._id
+        const customer_id = req.user._id
         const { tenant_id } = req.params
 
         await Cart.deleteOne({
-            customer: userId,
+            customer: customer_id,
             tenant: tenant_id
         })
         return responseParser({ status: 200 }, res)
@@ -183,10 +183,10 @@ const getCart = async (req, res) => {
 }
 
 const getAllCart = async (req, res) => {
-    const userId = req.user._id
+    const customer_id = req.user._id
     try {
         const carts = await Cart
-            .find({ customer: userId }, {
+            .find({ customer: customer_id }, {
                 customer: 0
             })
             .populate("tenant", [
