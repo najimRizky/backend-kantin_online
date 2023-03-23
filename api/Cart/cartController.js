@@ -54,18 +54,98 @@ const addItem = async (req, res) => {
 }
 
 const updateItem = async (req, res) => {
-    /** @Todo Update Cart Logic */
-    return res.send("Update Item")
+    try {
+        const userId = req.user._id
+        const { tenant_id } = req.params
+        const { menu_id, quantity } = req.body
+
+        await Cart.updateOne({
+            tenant: tenant_id,
+            customer: userId,
+            "items.menu": menu_id
+        }, {
+            $set: { "items.$.quantity": quantity }
+        })
+
+        const updatedCart = await Cart.findOne({
+            tenant: tenant_id,
+            customer: userId,
+            "items.menu": menu_id
+        })
+
+        if (updatedCart.items[0].quantity === 0) {
+            await Cart.updateOne({
+                tenant: tenant_id,
+                customer: userId,
+                "items.menu": menu_id
+            }, {
+                $pull: { items: { menu: menu_id } }
+            })
+        }
+
+        const updatedCart2 = await Cart.findOne({
+            tenant: tenant_id,
+            customer: userId,
+        }, ["items"])
+
+        if (updatedCart2.items.length === 0) {
+            await Cart.deleteOne({
+                tenant: tenant_id,
+                customer: userId
+            })
+        }
+
+        return responseParser({ status: 200 }, res)
+    } catch (err) {
+        return responseParser({ status: 404 }, res)
+    }
 }
 
 const removeItem = async (req, res) => {
-    /** @Todo Delete Cart Logic */
-    return res.send("Remove Item")
+    try {
+        const userId = req.user._id
+        const { tenant_id } = req.params
+        const { menu_id } = req.body
+
+        await Cart.updateOne({
+            tenant: tenant_id,
+            customer: userId,
+            "items.menu": menu_id
+        }, {
+            $pull: { items: { menu: menu_id } }
+        })
+
+        const updatedCart = await Cart.findOne({
+            tenant: tenant_id,
+            customer: userId,
+        }, ["items"])
+
+        if (updatedCart.items.length === 0) {
+            await Cart.deleteOne({
+                tenant: tenant_id,
+                customer: userId
+            })
+        }
+
+        return responseParser({ status: 200 }, res)
+    } catch (err) {
+        return responseParser({ status: 404 }, res)
+    }
 }
 
 const clearCart = async (req, res) => {
-    /** @Todo Delete Cart Logic */
-    return res.send("Clear Cart")
+    try {
+        const userId = req.user._id
+        const { tenant_id } = req.params
+
+        await Cart.deleteOne({
+            customer: userId,
+            tenant: tenant_id
+        })
+        return responseParser({ status: 200 }, res)
+    } catch (err) {
+        return responseParser({ status: 404 }, res)
+    }
 }
 
 const getCart = async (req, res) => {
