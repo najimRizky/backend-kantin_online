@@ -14,37 +14,15 @@ const addItem = async (req, res) => {
         })
 
         if (cart) {
-            const cartTenant = await Cart.findOne({
-                tenant: tenant_id,
-                customer: customer_id,
-                "items.menu": menu_id
-            })
+            const cartTenant = await Cart.getSingleCartSingleItem({ tenant_id, customer_id, menu_id })
 
             if (cartTenant) {
-                await Cart.updateOne({
-                    tenant: tenant_id,
-                    customer: customer_id,
-                    "items.menu": menu_id,
-                }, {
-                    $inc: { "items.$.quantity": quantity }
-                })
+                await Cart.addItemQuantity({ tenant_id, customer_id, menu_id, quantity })
             } else {
-                await Cart.updateOne({
-                    tenant: tenant_id,
-                    customer: customer_id,
-                }, {
-                    $push: { "items": { menu: mongoose.Types.ObjectId(menu_id), quantity: quantity } }
-                })
+                await Cart.addNewItem({ tenant_id, customer_id, menu_id, quantity })
             }
         } else {
-            await Cart.create({
-                tenant: tenant_id,
-                customer: customer_id,
-                items: [{
-                    menu: menu_id,
-                    quantity: quantity
-                }]
-            })
+            await Cart.createCart({ tenant_id, customer_id, menu_id, quantity })
         }
 
         return responseParser({ status: 200 }, res)
@@ -59,40 +37,18 @@ const updateItem = async (req, res) => {
         const { tenant_id } = req.params
         const { menu_id, quantity } = req.body
 
-        await Cart.updateOne({
-            tenant: tenant_id,
-            customer: customer_id,
-            "items.menu": menu_id
-        }, {
-            $set: { "items.$.quantity": quantity }
-        })
+        await Cart.updateItemQuantity({ tenant_id, customer_id, menu_id, quantity })
 
-        const updatedCart = await Cart.findOne({
-            tenant: tenant_id,
-            customer: customer_id,
-            "items.menu": menu_id
-        })
+        const updatedCart = await Cart.getSingleCartSingleItem({ tenant_id, customer_id, menu_id })
 
         if (updatedCart.items[0].quantity === 0) {
-            await Cart.updateOne({
-                tenant: tenant_id,
-                customer: customer_id,
-                "items.menu": menu_id
-            }, {
-                $pull: { items: { menu: menu_id } }
-            })
+            await Cart.removeItem({ tenant_id, customer_id, menu_id })
         }
 
-        const updatedCart2 = await Cart.findOne({
-            tenant: tenant_id,
-            customer: customer_id,
-        }, ["items"])
+        const updatedCart2 = await Cart.getSingleCartItem({ tenant_id, customer_id })
 
         if (updatedCart2.items.length === 0) {
-            await Cart.deleteOne({
-                tenant: tenant_id,
-                customer: customer_id
-            })
+            await Cart.clearCart({ customer_id, tenant_id })
         }
 
         return responseParser({ status: 200 }, res)
@@ -107,24 +63,12 @@ const removeItem = async (req, res) => {
         const { tenant_id } = req.params
         const { menu_id } = req.body
 
-        await Cart.updateOne({
-            tenant: tenant_id,
-            customer: customer_id,
-            "items.menu": menu_id
-        }, {
-            $pull: { items: { menu: menu_id } }
-        })
+        await Cart.removeItem({ tenant_id, customer_id, menu_id })
 
-        const updatedCart = await Cart.findOne({
-            tenant: tenant_id,
-            customer: customer_id,
-        }, ["items"])
+        const updatedCart = await Cart.getSingleCartItem({ tenant_id, customer_id })
 
         if (updatedCart.items.length === 0) {
-            await Cart.deleteOne({
-                tenant: tenant_id,
-                customer: customer_id
-            })
+            await Cart.clearCart({ customer_id, tenant_id })
         }
 
         return responseParser({ status: 200 }, res)
@@ -138,10 +82,8 @@ const clearCart = async (req, res) => {
         const customer_id = req.user._id
         const { tenant_id } = req.params
 
-        await Cart.deleteOne({
-            customer: customer_id,
-            tenant: tenant_id
-        })
+        await Cart.clearCart({ customer_id, tenant_id })
+
         return responseParser({ status: 200 }, res)
     } catch (err) {
         return responseParser({ status: 404 }, res)
@@ -150,21 +92,9 @@ const clearCart = async (req, res) => {
 
 const getCart = async (req, res) => {
     try {
+        const customer_id = req.user._id
         const { tenant_id } = req.params
-        const cart = await Cart
-            .findOne({ tenant: tenant_id }, {
-                customer: 0
-            })
-            .populate("tenant", [
-                "full_name",
-                "profile_image"
-            ])
-            .populate("items.menu", [
-                "title",
-                "description",
-                "image",
-                "price"
-            ])
+        const cart = await Cart.getSingleCart({ tenant_id, customer_id })
 
         if (!cart) throw Error
         else {
@@ -185,22 +115,7 @@ const getCart = async (req, res) => {
 const getAllCart = async (req, res) => {
     const customer_id = req.user._id
     try {
-        const carts = await Cart
-            .find({ customer: customer_id }, {
-                customer: 0
-            })
-            .populate("tenant", [
-                "full_name",
-                "profile_image"
-            ])
-            .populate("items.menu", [
-                "title",
-                "description",
-                "image",
-                "price"
-            ])
-
-        const cartWithTotal = carts
+        const carts = await Cart.getAllCart({ customer_id })
 
         if (carts) {
             carts.map((cart, i) => {
@@ -212,7 +127,7 @@ const getAllCart = async (req, res) => {
             })
         }
 
-        return responseParser({ status: 200, data: cartWithTotal }, res)
+        return responseParser({ status: 200, data: carts }, res)
     } catch (err) {
         return responseParser({ status: 404 }, res)
     }
