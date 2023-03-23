@@ -1,11 +1,12 @@
-import mongoose from "mongoose"
+import mongoose from 'mongoose'
 import responseParser from "../../helper/responseParser.js"
 import Cart from "./cartModel.js"
 
 const addItem = async (req, res) => {
     try {
         const userId = req.user._id
-        const { tenant_id, menu_id, quantity } = req.body
+        const { tenant_id } = req.params
+        const { menu_id, quantity } = req.body
 
         const cart = await Cart.findOne({
             tenant: tenant_id,
@@ -69,9 +70,9 @@ const clearCart = async (req, res) => {
 
 const getCart = async (req, res) => {
     try {
-        const { _id } = req.params
+        const { tenant_id } = req.params
         const cart = await Cart
-            .findById(_id, {
+            .findOne({ tenant: tenant_id }, {
                 customer: 0
             })
             .populate("tenant", [

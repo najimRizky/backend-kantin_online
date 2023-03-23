@@ -15,7 +15,7 @@ router.use(checkRole(roleConfig.customer))
 
 /** @ADD_ITEM */
 router.post(
-    "/",
+    "/:tenant_id",
     cartValidation.addItem,
     checkValidation,
     cartController.addItem
@@ -23,7 +23,7 @@ router.post(
 
 /** @UPDATE_ITEM */
 router.patch(
-    "/:_id",
+    "/:tenant_id",
     cartValidation.updateItem,
     checkValidation,
     cartController.updateItem
@@ -31,7 +31,7 @@ router.patch(
 
 /** @REMOVE_ITEM */
 router.delete(
-    "/:_id",
+    "/:tenant_id",
     cartValidation.removeItem,
     checkValidation,
     cartController.removeItem
@@ -39,7 +39,7 @@ router.delete(
 
 /** @CLEAR_CART */
 router.delete(
-    "/clear/:_id",
+    "/clear/:tenant_id",
     cartValidation.clearCart,
     checkValidation,
     cartController.clearCart
@@ -47,7 +47,7 @@ router.delete(
 
 /** @GET_SINGLE_CART */
 router.get(
-    "/:_id",
+    "/:tenant_id",
     cartValidation.getCart,
     checkValidation,
     cartController.getCart
