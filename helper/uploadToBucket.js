@@ -1,38 +1,58 @@
 import fs from "fs"
-import AWS from "aws-sdk"
 import { BucketConfig, BucketParams } from "./../config/bucketConfig.js"
 import mime from "mime-types"
 import { nanoid } from "nanoid"
+import { DeleteObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3"
 
-const S3 = new AWS.S3(BucketConfig)
+const S3 = new S3Client({
+    region: "auto",
+    endpoint: BucketConfig.endpoint,
+    credentials: {
+        accessKeyId: BucketConfig.accessKeyId,
+        secretAccessKey: BucketConfig.secretAccessKey
+    }
+})
 const CLOUDFLARE_PUBLIC_BUCKET_URL = process.env.CLOUDFLARE_PUBLIC_BUCKET_URL
 
 const uploadToBucket = async ({ req, currentUrl }) => {
     const { path, mimetype, filename } = req.file
     const extension = mime.extension(mimetype)
 
-    const fileNameWithExt = currentUrl === "" ? "" : currentUrl.substring(currentUrl.lastIndexOf("/") + 1)
-    const currentFileName = currentUrl === "" ? "" : fileNameWithExt.substring(0, fileNameWithExt.lastIndexOf("."));
+    const uniqueFileName = nanoid(3) + filename;
 
-    const uniqueFileName = currentFileName === "" ? nanoid(5) + filename : currentFileName;
+    const Body = fs.createReadStream(path)
+    const Key = `${uniqueFileName}.${extension}`
 
-    const params = {
+    const params = new PutObjectCommand({
         ...BucketParams,
-        Body: fs.createReadStream(path),
-        Key: `${uniqueFileName}.${extension}`
+        Body,
+        Key
+    })
+
+    const deleteOldFile = async () => {
+        const fileNameWithExt = currentUrl.substring(currentUrl.lastIndexOf("/") + 1)
+        const deleteParams = new DeleteObjectCommand({
+            ...BucketParams,
+            Key: fileNameWithExt
+        })
+
+        S3.send(deleteParams)
     }
 
     return new Promise((resolve, reject) => {
-        S3.upload(params, async (err, data) => {
-            if (err) {
-                reject(err)
-            }
-            if (data) {
+        S3.send(params)
+            .then((_) => {
                 fs.unlinkSync(path); // delete
-                const url = `${CLOUDFLARE_PUBLIC_BUCKET_URL}/${data.Key}`;
+                const url = `${CLOUDFLARE_PUBLIC_BUCKET_URL}/${Key}`;
+
+                if (currentUrl !== "") {
+                    deleteOldFile()
+                }
+
                 resolve(url)
-            }
-        });
+            }).catch((err) => {
+                reject(err)
+            }).finally
     })
 }
 
