@@ -38,8 +38,8 @@ server.use("/tenant", tenantRoutes)
 server.use("/menu", menuRoutes)
 server.use("/cart", cartRoutes)
 
-const WITH_DB = eval(process.env.WITH_DB)
-if (WITH_DB) {
+const ENABLE_DB = eval(process.env.ENABLE_DB)
+if (ENABLE_DB) {
     connectDatabase(mongoose, server)
 } else {
     serverListen(server)
