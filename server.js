@@ -19,6 +19,7 @@ import tenantRoutes from "./api/Tenant/tenantRoutes.js"
 import menuRoutes from "./api/Menu/menuRoutes.js"
 import otherRoutes from "./api/Other/otherRoutes.js"
 import cartRoutes from "./api/Cart/cartRoutes.js"
+import orderRoutes from "./api/Order/orderRoutes.js"
 
 /** @Initialization */ 
 const server = express()
@@ -37,6 +38,7 @@ server.use("/account", accountRoutes)
 server.use("/tenant", tenantRoutes)
 server.use("/menu", menuRoutes)
 server.use("/cart", cartRoutes)
+server.use("/order", orderRoutes)
 
 const ENABLE_DB = eval(process.env.ENABLE_DB)
 if (ENABLE_DB) {

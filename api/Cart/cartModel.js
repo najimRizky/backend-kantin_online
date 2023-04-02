@@ -152,4 +152,10 @@ cartSchema.statics.getAllCart = async function ({ customer_id }) {
     return allCart
 }
 
+cartSchema.statics.clearCartById = async function (cart_id) {
+    const deletedCart = await this.findByIdAndDelete(cart_id)
+
+    return deletedCart
+}
+
 export default mongoose.model("Cart", cartSchema)

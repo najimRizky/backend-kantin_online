@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const Schema = mongoose.Schema
 
-const orderModel = new Schema({
+const orderSchema = new Schema({
     customer: {
         type: Schema.Types.ObjectId,
         ref: "Customer",
@@ -12,6 +12,11 @@ const orderModel = new Schema({
         type: Schema.Types.ObjectId,
         ref: "Tenant",
         required: true,
+    },
+    review: {
+        type: Schema.Types.ObjectId,
+        ref: "Review",
+        default: null
     },
     items: [{
         menu: {
@@ -28,21 +33,49 @@ const orderModel = new Schema({
             required: true
         }
     }],
-    statuses: [{
-        status: {
-            type: Schema.Types.ObjectId,
-            ref: "Status",
+    progress: {
+        created: {
+            type: Date,
+            default: Date.now,
             required: true
         },
-        createdAt: {
+        confirmed: {
             type: Date,
-            required: true
-        }
-    }],
+            default: null
+        },
+        ready: {
+            type: Date,
+            default: null
+        },
+        completed: {
+            type: Date,
+            default: null
+        },
+        rejected: {
+            type: Date,
+            default: null
+        },
+    },
+    status: {
+        type: String,
+        enum: ["pending", "preparing", "ready", "completed", "cancelled"],
+        required: true
+    },
     total_price: {
         type: Number,
         required: true
+    },
+    payment_method: {
+        type: String,
+        required: true,
+        default: ""
     }
 }, { timestamps: true })
 
-export default mongoose.model("Order", orderModel)
+orderSchema.statics.createOrder = async function (newOrder) {
+    const createdOrder = await this.create(newOrder)
+
+    return createdOrder
+}
+
+export default mongoose.model("Order", orderSchema)
