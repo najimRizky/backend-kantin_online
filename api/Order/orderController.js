@@ -27,12 +27,10 @@ const createOrder = async (req, res) => {
             payment_method: payment_method
         }
         const createdOrder = await Order.createOrder(newOrder)
-        await Cart.clearCartById(cart_id)
+        // await Cart.clearCartById(cart_id)
 
         await session.commitTransaction()
         session.endSession()
-
-        await Order.findByIdAndUpdate((createdOrder._doc._id).toString(), { cancel_id: tesTimer })
 
         return responseParser({ data: createdOrder }, res)
     } catch (err) {
@@ -44,12 +42,64 @@ const createOrder = async (req, res) => {
 }
 
 const confirmOrder = async (req, res) => {
-    const { _id } = req.params
-    const order = await Order.findById(_id)
+    try {
+        const { _id } = req.params
+        const tenant_id = req.user._id
 
-    clearTimeout(order.cancel_id)
+        const confirmedOrder = await Order.confirmOrder(_id, tenant_id)
 
-    res.send("anjas")
+        if (!confirmedOrder) throw Error("||404")
+
+        return responseParser({ status: 200 }, res)
+
+    } catch (err) {
+        return errorHandler(err, res)
+    }
+}
+
+const rejectOrder = async (req, res) => {
+    try {
+        const { _id } = req.params
+        const tenant_id = req.user._id
+
+        const rejectedOrder = await Order.rejectOrder(_id, tenant_id)
+
+        if (!rejectedOrder) throw Error("||404")
+
+        return responseParser({ status: 200 }, res)
+    } catch (err) {
+        return errorHandler(err, res)
+    }
+}
+
+const serveOrder = async (req, res) => {
+    try {
+        const { _id } = req.params
+        const tenant_id = req.user._id
+
+        const servedOrder = await Order.serveOrder(_id, tenant_id)
+
+        if (!servedOrder) throw Error("||404")
+
+        return responseParser({ status: 200 }, res)
+    } catch (err) {
+        return errorHandler(err, res)
+    }
+}
+
+const finishOrder = async (req, res) => {
+    try {
+        const { _id } = req.params
+        const tenant_id = req.user._id
+
+        const completedOrder = await Order.finishOrder(_id, tenant_id)
+
+        if (!completedOrder) throw Error("||404")
+
+        return responseParser({ status: 200 }, res)
+    } catch (err) {
+        return errorHandler(err, res)
+    }
 }
 
 const calculateTotalPrice = (items) => {
@@ -64,5 +114,8 @@ const calculateTotalPrice = (items) => {
 
 export default {
     createOrder,
-    confirmOrder
+    confirmOrder,
+    rejectOrder,
+    serveOrder,
+    finishOrder
 }

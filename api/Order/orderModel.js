@@ -58,7 +58,7 @@ const orderSchema = new Schema({
     },
     status: {
         type: String,
-        enum: ["pending", "preparing", "ready", "completed", "cancelled"],
+        enum: ["pending", "preparing", "ready", "finished", "rejected"],
         required: true
     },
     total_price: {
@@ -76,6 +76,30 @@ orderSchema.statics.createOrder = async function (newOrder) {
     const createdOrder = await this.create(newOrder)
 
     return createdOrder
+}
+
+orderSchema.statics.confirmOrder = async function (_id, tenant_id) {
+    const confirmedOrder = await this.findOneAndUpdate({ _id, tenant: tenant_id, status: "pending" }, { status: "preparing", "progress.confirmed": new Date() })
+
+    return confirmedOrder
+}
+
+orderSchema.statics.rejectOrder = async function (_id, tenant_id) {
+    const confirmedOrder = await this.findOneAndUpdate({ _id, tenant: tenant_id, status: { $in: ["pending", "preparing"] } }, { status: "rejected", "progress.rejected": new Date() })
+
+    return confirmedOrder
+}
+
+orderSchema.statics.serveOrder = async function (_id, tenant_id) {
+    const confirmedOrder = await this.findOneAndUpdate({ _id, tenant: tenant_id, status: "preparing" }, { status: "ready", "progress.ready": new Date() })
+
+    return confirmedOrder
+}
+
+orderSchema.statics.finishOrder = async function (_id, tenant_id) {
+    const confirmedOrder = await this.findOneAndUpdate({ _id, tenant: tenant_id, status: "ready" }, { status: "finished", "progress.finish": new Date() })
+
+    return confirmedOrder
 }
 
 export default mongoose.model("Order", orderSchema)

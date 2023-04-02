@@ -24,7 +24,22 @@ const confirmOrder = [
     PARAM_ORDER_ID
 ]
 
+const rejectOrder = [
+    PARAM_ORDER_ID
+]
+
+const serveOrder = [
+    PARAM_ORDER_ID
+]
+
+const finishOrder = [
+    PARAM_ORDER_ID
+]
+
 export default {
     createOrder,
-    confirmOrder
+    confirmOrder,
+    rejectOrder,
+    serveOrder,
+    finishOrder
 }
