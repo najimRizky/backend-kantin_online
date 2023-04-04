@@ -25,7 +25,7 @@ const editMenu = async (req, res) => {
             data.image = url
         }
 
-        await Menu.findByIdAndUpdate(menuId, data, { tenant: _id })
+        await Menu.findOneAndUpdate({_id: menuId, tenant: _id}, data)
         return responseParser({ status: 200 }, res)
     } catch (err) {
         return responseParser({ status: 404 }, res)
@@ -48,7 +48,7 @@ const deleteMenu = async (req, res) => {
     try {
         const { _id } = req.params
 
-        const menu = await Menu.findByIdAndDelete(_id)
+        const menu = await Menu.findOneAndDelete({_id: menuId, tenant: _id})
 
         if(!menu) throw Error
         

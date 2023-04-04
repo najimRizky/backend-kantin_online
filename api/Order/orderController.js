@@ -8,10 +8,11 @@ const createOrder = async (req, res) => {
     const session = await mongoose.startSession()
     try {
         session.startTransaction()
-
+        
         const { cart_id, payment_method } = req.body
-
-        const cart = await Cart.findById(cart_id).populate("items.menu")
+        const customer_id = req.user._id
+        
+        const cart = await Cart.findOne({_id: cart_id, customer: customer_id}).populate("items.menu")
         if (!cart) throw Error("||404")
 
         const newOrder = {
