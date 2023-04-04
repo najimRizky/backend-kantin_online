@@ -10,6 +10,7 @@ const router = express.Router()
 
 /** @see /menu */
 
+/** @GET_SINGLE_MENU */
 router.get(
     "/:_id",
     menuValidation.getDetail,
@@ -20,6 +21,7 @@ router.get(
 router.use(requireAuth)
 router.use(checkRole(roleConfig.tenant))
 
+/** @ADD_MENU */
 router.post(
     "/",
     menuValidation.uploadValidation,
@@ -28,6 +30,7 @@ router.post(
     menuController.addMenu,
 )
 
+/** @EDIT_MENU */
 router.put(
     "/:_id",
     menuValidation.uploadValidation,
@@ -36,6 +39,7 @@ router.put(
     menuController.editMenu
 )
 
+/** @DELETE_MENU */
 router.delete(
     "/:_id",
     menuValidation.deleteMenu,

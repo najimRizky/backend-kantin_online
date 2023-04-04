@@ -13,11 +13,13 @@ const router = express.Router()
 router.use(requireAuth)
 router.use(checkRole(roleConfig.customer))
 
+/** @GET_PROFILE_DATA */
 router.get(
     "/profile",
     customerController.getProfile
 )
 
+/** @UPDATE_BALANCE */
 router.post(
     "/balance",
     customerValidation.updateBalance,
@@ -25,6 +27,7 @@ router.post(
     customerController.updateBalance,
 )
 
+/** @UPDATE_PROFILE */
 router.put(
     "/profile",
     customerValidation.uploadValidation,
