@@ -102,6 +102,44 @@ const finishOrder = async (req, res) => {
     }
 }
 
+const getAllOrder = async (req, res) => {
+    try {
+        const user_id = req.user._id //Tenant or Customer
+
+        const orders = await Order.find({
+            $or: [
+                { customer: user_id },
+                { tenant: user_id },
+            ]
+        })
+
+        return responseParser({ status: 200, data: orders }, res)
+    } catch (err) {
+        return errorHandler(err, res)
+    }
+}
+
+const getSingleOrder = async (req, res) => {
+    try {
+        const user_id = req.user._id //Tenant or Customer
+        const { _id } = req.params
+
+        const order = await Order.findOne({
+            _id: _id,
+            $or: [
+                { customer: user_id },
+                { tenant: user_id },
+            ]
+        })
+
+        if (!order) throw Error("||404")
+
+        return responseParser({ status: 200, data: order }, res)
+    } catch (err) {
+        return errorHandler(err, res)
+    }
+}
+
 const calculateTotalPrice = (items) => {
     let totalPrice = 0
 
@@ -117,5 +155,7 @@ export default {
     confirmOrder,
     rejectOrder,
     serveOrder,
-    finishOrder
+    finishOrder,
+    getAllOrder,
+    getSingleOrder
 }

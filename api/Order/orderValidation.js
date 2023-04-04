@@ -36,10 +36,15 @@ const finishOrder = [
     PARAM_ORDER_ID
 ]
 
+const getSingleOrder = [
+    PARAM_ORDER_ID
+]
+
 export default {
     createOrder,
     confirmOrder,
     rejectOrder,
     serveOrder,
-    finishOrder
+    finishOrder,
+    getSingleOrder
 }

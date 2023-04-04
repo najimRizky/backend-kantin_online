@@ -57,4 +57,20 @@ router.patch(
     orderController.finishOrder
 )
 
+/** @GET_ALL_ORDER */
+router.get(
+    "/",
+    // orderValidation.finishOrder,
+    // checkValidation,
+    orderController.getAllOrder
+)
+
+/** @GET_SINGLE_ORDER */
+router.get(
+    "/:_id",
+    orderValidation.getSingleOrder,
+    checkValidation,
+    orderController.getSingleOrder
+)
+
 export default router
