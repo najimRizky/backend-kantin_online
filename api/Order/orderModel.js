@@ -97,7 +97,7 @@ orderSchema.statics.serveOrder = async function (_id, tenant_id) {
 }
 
 orderSchema.statics.finishOrder = async function (_id, tenant_id) {
-    const confirmedOrder = await this.findOneAndUpdate({ _id, tenant: tenant_id, status: "ready" }, { status: "finished", "progress.finish": new Date() })
+    const confirmedOrder = await this.findOneAndUpdate({ _id, tenant: tenant_id, status: "ready" }, { status: "finished", "progress.completed": new Date() })
 
     return confirmedOrder
 }
