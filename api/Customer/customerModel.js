@@ -55,4 +55,10 @@ customerSchema.statics.register = async function ({ email, password, full_name }
     return customer
 }
 
+customerSchema.statics.reduceBalance = async function (_id, nominal) {
+    const updatedCustomer = await this.findByIdAndUpdate(_id, { $inc: { balance: -nominal } })
+
+    return updatedCustomer
+}
+
 export default mongoose.model("Customer", customerSchema)

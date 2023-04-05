@@ -1,8 +1,10 @@
 import mongoose from "mongoose"
 import errorHandler from "../../helper/errorHandler.js"
 import responseParser from "../../helper/responseParser.js"
+
 import Cart from "./../Cart/cartModel.js"
 import Order from "./orderModel.js"
+import Customer from "./../Customer/customerModel.js"
 
 const createOrder = async (req, res) => {
     const session = await mongoose.startSession()
@@ -15,6 +17,11 @@ const createOrder = async (req, res) => {
         const cart = await Cart.findOne({_id: cart_id, customer: customer_id}).populate("items.menu")
         if (!cart) throw Error("||404")
 
+        const totalPrice = calculateTotalPrice(cart.items)
+        const customerBalance = await Customer.findById(customer_id, ["balance"])
+
+        if (customerBalance < totalPrice) throw Error("||402")
+
         const newOrder = {
             customer: cart.customer,
             tenant: cart.tenant,
@@ -24,11 +31,12 @@ const createOrder = async (req, res) => {
                 price: item.menu.price
             })),
             status: "pending",
-            total_price: calculateTotalPrice(cart.items),
+            total_price: totalPrice,
             payment_method: payment_method
         }
         const createdOrder = await Order.createOrder(newOrder)
         // await Cart.clearCartById(cart_id)
+        await Customer.reduceBalance(customer_id, totalPrice)
 
         await session.commitTransaction()
         session.endSession()
