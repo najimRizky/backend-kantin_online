@@ -132,15 +132,10 @@ const getAllOrder = async (req, res) => {
 const getSingleOrder = async (req, res) => {
     try {
         const user_id = req.user._id //Tenant or Customer
+        const role = req.user.role //Tenant or Customer
         const { _id } = req.params
 
-        const order = await Order.findOne({
-            _id: _id,
-            $or: [
-                { customer: user_id },
-                { tenant: user_id },
-            ]
-        }).populate("review", ["customer", "rating", "content"]).populate({ path: "review", populate: { path: "customer" } })
+        const order = await Order.getSingleOrder(_id, role, user_id)
 
         if (!order) throw Error("||404")
 

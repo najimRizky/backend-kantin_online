@@ -102,4 +102,28 @@ orderSchema.statics.finishOrder = async function (_id, tenant_id) {
     return confirmedOrder
 }
 
+orderSchema.statics.getSingleOrder = async function (_id, role, user_id) {
+    const populateFields = [
+        {
+            path: 'items.menu',
+            select: ['title', 'description', 'image']
+        },
+        {
+            path: 'review',
+            select: ['rating', 'content']
+        },
+        {
+            path: role === 'customer' ? 'tenant' : 'customer',
+            select: ['full_name', 'profile_image']
+        }
+    ];
+
+    const singleOrder = await this.findOne(
+        { _id, [role]: user_id },
+        { [role]: 0 }
+    ).populate(populateFields);
+
+    return singleOrder;
+}
+
 export default mongoose.model("Order", orderSchema)
