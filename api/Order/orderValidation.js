@@ -40,11 +40,25 @@ const getSingleOrder = [
     PARAM_ORDER_ID
 ]
 
+const addReview = [
+    param("_id")
+        .exists({ checkFalsy: true })
+        .isMongoId()
+        .withMessage("Param order id is not included or invalid"),
+    body("rating")
+        .exists({ checkFalsy: true })
+        .isInt({ min: 1, max: 5 })
+        .withMessage("Rating is required"),
+    body("content")
+        .exists()
+]
+
 export default {
     createOrder,
     confirmOrder,
     rejectOrder,
     serveOrder,
     finishOrder,
-    getSingleOrder
+    getSingleOrder,
+    addReview
 }

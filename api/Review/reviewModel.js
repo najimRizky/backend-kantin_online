@@ -13,9 +13,11 @@ const reviewModel = new Schema({
         ref: "Tenant",
         required: true,
     },
-    score: {
+    rating: {
         type: Number,
         required: true,
+        min: 1,
+        max: 5
     },
     content: {
         type: String,

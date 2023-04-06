@@ -5,16 +5,17 @@ import responseParser from "../../helper/responseParser.js"
 import Cart from "./../Cart/cartModel.js"
 import Order from "./orderModel.js"
 import Customer from "./../Customer/customerModel.js"
+import Review from "./../Review/reviewModel.js"
 
 const createOrder = async (req, res) => {
     const session = await mongoose.startSession()
     try {
         session.startTransaction()
-        
+
         const { cart_id, payment_method } = req.body
         const customer_id = req.user._id
-        
-        const cart = await Cart.findOne({_id: cart_id, customer: customer_id}).populate("items.menu")
+
+        const cart = await Cart.findOne({ _id: cart_id, customer: customer_id }).populate("items.menu")
         if (!cart) throw Error("||404")
 
         const totalPrice = calculateTotalPrice(cart.items)
@@ -139,12 +140,58 @@ const getSingleOrder = async (req, res) => {
                 { customer: user_id },
                 { tenant: user_id },
             ]
-        })
+        }).populate("review", ["customer", "rating", "content"]).populate({ path: "review", populate: { path: "customer" } })
 
         if (!order) throw Error("||404")
 
         return responseParser({ status: 200, data: order }, res)
     } catch (err) {
+        return errorHandler(err, res)
+    }
+}
+
+const addReview = async (req, res) => {
+    const session = await mongoose.startSession()
+    try {
+        session.startTransaction()
+
+        const customer_id = req.user._id
+        const { _id } = req.params
+        const { rating, content } = req.body
+
+        const filter = {
+            _id: _id,
+            customer: customer_id,
+            status: "finished",
+            review: null
+        }
+
+        const order = await Order.findOne(filter)
+
+        console.log(order, filter)
+        if (!order) throw Error("||404")
+
+
+        const tenant_id = order.tenant
+
+        const newReview = {
+            customer: customer_id,
+            tenant: tenant_id,
+            rating: rating,
+            content: content
+        }
+
+        const review = await Review.create(newReview)
+        await Order.findByIdAndUpdate(_id, { $set: { review: review._id } })
+
+        await session.commitTransaction()
+        session.endSession()
+
+        return responseParser({ status: 200 }, res)
+    } catch (err) {
+        await session.abortTransaction()
+        session.endSession()
+
         return errorHandler(err, res)
     }
 }
@@ -166,5 +213,6 @@ export default {
     serveOrder,
     finishOrder,
     getAllOrder,
-    getSingleOrder
+    getSingleOrder,
+    addReview
 }

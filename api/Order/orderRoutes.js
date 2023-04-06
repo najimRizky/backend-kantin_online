@@ -73,4 +73,14 @@ router.get(
     orderController.getSingleOrder
 )
 
+/** @ADD_ORDER_REVIEW */
+router.post(
+    "/review/:_id",
+    checkRole(roleConfig.customer),
+    orderValidation.addReview,
+    checkValidation,
+    orderController.addReview
+)
+
+
 export default router
