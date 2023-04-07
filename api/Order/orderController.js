@@ -115,13 +115,9 @@ const finishOrder = async (req, res) => {
 const getAllOrder = async (req, res) => {
     try {
         const user_id = req.user._id //Tenant or Customer
+        const role = req.user.role //Tenant or Customer
 
-        const orders = await Order.find({
-            $or: [
-                { customer: user_id },
-                { tenant: user_id },
-            ]
-        })
+        const orders = await Order.getAllOrder(role, user_id)
 
         return responseParser({ status: 200, data: orders }, res)
     } catch (err) {

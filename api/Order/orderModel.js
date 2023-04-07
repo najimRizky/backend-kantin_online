@@ -126,4 +126,28 @@ orderSchema.statics.getSingleOrder = async function (_id, role, user_id) {
     return singleOrder;
 }
 
+orderSchema.statics.getAllOrder = async function (role, user_id) {
+    const populateFields = [
+        {
+            path: 'items.menu',
+            select: ['title', 'description', 'image']
+        },
+        {
+            path: 'review',
+            select: ['rating', 'content']
+        },
+        {
+            path: role === 'customer' ? 'tenant' : 'customer',
+            select: ['full_name', 'profile_image']
+        }
+    ];
+
+    const allOrder = await this.find(
+        { [role]: user_id },
+        { [role]: 0 }
+    ).populate(populateFields);
+
+    return allOrder;
+}
+
 export default mongoose.model("Order", orderSchema)
