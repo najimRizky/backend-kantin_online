@@ -9,9 +9,9 @@ const requireAuth = async (req, res, next) => {
             throw Error
         }
 
-        const token = authorization.split(" ")[1]
+        const accessToken = authorization.split(" ")[1]
 
-        const { _id, role, email } = jwt.verify(token, process.env.JWT_SECRET)
+        const { _id, role, email } = jwt.verify(accessToken, process.env.JWT_SECRET)
         req.user = { _id, role, email }
         next()
     } catch (_) {

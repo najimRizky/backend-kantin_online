@@ -2,7 +2,7 @@ import responseParser from "../../helper/responseParser.js";
 import Customer from "../Customer/customerModel.js";
 import Tenant from "../Tenant/tenantModel.js";
 import bcrypt from "bcrypt"
-import createJWT from "../../helper/createJWT.js";
+import createAccessToken from "../../helper/createAccessToken.js";
 import roleConfig from "../../config/roleConfig.js";
 import sendEmailConfirmation from "../../server/sendEmailConfirmation.js"
 
@@ -37,14 +37,14 @@ const customerLogin = async ({ password, customer }) => {
     if (!match) {
         throw Error
     }
-    const jwt = createJWT({ _id: customer._id, role: roleConfig.customer, email: customer.email })
+    const access_token = createAccessToken({ _id: customer._id, role: roleConfig.customer, email: customer.email })
 
     return {
         email: customer.email,
         full_name: customer.full_name,
         role: roleConfig.customer,
         profile_image: customer.profile_image,
-        jwt
+        access_token
     }
 }
 
@@ -53,14 +53,14 @@ const tenantLogin = async ({ password, tenant }) => {
     if (!match) {
         throw Error
     }
-    const jwt = createJWT({ _id: tenant._id, role: roleConfig.tenant, email: tenant.email })
+    const access_token = createAccessToken({ _id: tenant._id, role: roleConfig.tenant, email: tenant.email })
 
     return {
         email: tenant.email,
         full_name: tenant.full_name,
         role: roleConfig.tenant,
         profile_image: tenant.profile_image,
-        jwt
+        access_token
     }
 }
 
