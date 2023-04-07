@@ -5,10 +5,10 @@ const checkRole = (role) => {
     return (req, res, next) => {
         const userRole = req.user.role
 
-        if (userRole === role || userRole === roleConfig.admin) {
+        if (userRole === role) {
             next()
         } else {
-            responseParser({ status: 401 }, res)
+            responseParser({ status: 403 }, res)
         }
     }
 }
