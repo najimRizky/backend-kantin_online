@@ -4,6 +4,7 @@ const router = express.Router()
 import accountValidation from "./accountValidation.js"
 import accountController from "./accountController.js"
 import checkValidation from "../../helper/checkValidation.js"
+import requireAuth from "../../validation/requireAuth.js"
 
 /** @see /account */
 
@@ -29,6 +30,13 @@ router.get(
     accountValidation.confirm,
     checkValidation,
     accountController.confirm
+)
+
+/** @CHECK_ACCESS_TOKEN_VALIDITY */
+router.get(
+    "/validate-token",
+    requireAuth,
+    accountController.validateToken
 )
 
 export default router

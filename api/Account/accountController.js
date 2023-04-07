@@ -5,6 +5,7 @@ import bcrypt from "bcrypt"
 import createAccessToken from "../../helper/createAccessToken.js";
 import roleConfig from "../../config/roleConfig.js";
 import sendEmailConfirmation from "../../server/sendEmailConfirmation.js"
+import errorHandler from "./../../helper/errorHandler.js"
 
 const login = async (req, res) => {
     const { email, password } = req.body;
@@ -95,24 +96,26 @@ const register = async (req, res) => {
 
 // customer only
 const confirm = async (req, res) => {
-    const { token } = req.query
+    try {
+        const { token } = req.query
+        const customer = await Customer.findOneAndUpdate({ confirmation_token: token, confirmed: false}, { confirmed: true })
 
-    const {_id} = await Customer.findOne({ confirmation_token: token })
+        if (!customer) throw Error("Confirmation failed. Your account is already confirmed or invalid token||403")
 
-    if (customer) {
-        if (customer.confirmed) {
-            return res.send("Your account already confirmed.")
-        } else {
-            await Customer.findByIdAndUpdate(_id, {confirmed: true})
-            return res.send("Account confirmation success! You may login now.")
-        }
-    } else {
-        return responseParser({ status: 404, error: "Invalid account confirmation link" }, res)
+        return res.send("Account confirmation success! You may login now.")
+
+    } catch (err) {
+        return errorHandler(err, res)
     }
+}
+
+export const validateToken = async (req, res) => {
+    return responseParser({status: 200, message: "Access token is valid"}, res)
 }
 
 export default {
     login,
     register,
-    confirm
+    confirm,
+    validateToken,
 }
