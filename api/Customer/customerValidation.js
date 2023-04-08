@@ -27,6 +27,10 @@ const editProfile = [
             if (!validFullName.test(value)) throw new Error("Invalid Full Name")
             return true
         }),
+    body("email")
+        .exists({ checkFalsy: true })
+        .isEmail()
+        .isEmail("Email is not included or invalid email"),
 ]
 
 const updateBalance = [
@@ -38,7 +42,7 @@ const updateBalance = [
 ]
 
 export default {
-    editProfile,
     uploadValidation,
+    editProfile,
     updateBalance
 }

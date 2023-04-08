@@ -2,14 +2,15 @@ import responseParser from "../../helper/responseParser.js"
 import uploadToBucket from "../../helper/uploadToBucket.js"
 import sendEmailConfirmation from "../../server/sendEmailConfirmation.js"
 import Customer from "./customerModel.js"
+import errorHandler from "./../../helper/errorHandler.js"
 
 const editProfile = async (req, res) => {
     try {
         const { _id } = req.user
-        const { full_name } = req.body
+        const { full_name, email } = req.body
         const { profile_image } = await Customer.findById(_id, ["profile_image"])
 
-        const data = { full_name }
+        const data = { full_name, email }
 
         if (req.file) {
             const url = await uploadToBucket({ req, currentUrl: profile_image })
@@ -19,8 +20,7 @@ const editProfile = async (req, res) => {
         await Customer.findByIdAndUpdate(_id, data)
         return responseParser({ status: 200 }, res)
     } catch (err) {
-        console.log(err)
-        return responseParser({ status: 404 }, res)
+        return errorHandler(err)
     }
 }
 
