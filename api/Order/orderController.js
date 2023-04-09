@@ -1,6 +1,7 @@
 import mongoose from "mongoose"
 import errorHandler from "../../helper/errorHandler.js"
 import responseParser from "../../helper/responseParser.js"
+import orderRejector from "../../helper/orderRejector.js"
 
 import Cart from "./../Cart/cartModel.js"
 import Order from "./orderModel.js"
@@ -38,6 +39,8 @@ const createOrder = async (req, res) => {
         const createdOrder = await Order.createOrder(newOrder)
         // await Cart.clearCartById(cart_id)
         await Customer.reduceBalance(customer_id, totalPrice)
+        
+        orderRejector.assignAutoReject(createdOrder._id, cart.tenant, createdOrder.progress.created)
 
         await session.commitTransaction()
         session.endSession()
@@ -59,6 +62,8 @@ const confirmOrder = async (req, res) => {
         const confirmedOrder = await Order.confirmOrder(_id, tenant_id)
 
         if (!confirmedOrder) throw Error("||404")
+
+        orderRejector.removeAutoReject(_id)
 
         return responseParser({ status: 200 }, res)
 
