@@ -47,8 +47,9 @@ const getDetail = async (req, res) => {
 const deleteMenu = async (req, res) => {
     try {
         const { _id } = req.params
+        const tenant_id = req.user._id
 
-        const menu = await Menu.findOneAndDelete({_id: menuId, tenant: _id})
+        const menu = await Menu.findOneAndDelete({_id: _id, tenant: tenant_id})
 
         if(!menu) throw Error
         

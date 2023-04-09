@@ -1,5 +1,4 @@
 import multer from "multer"
-import responseParser from "../helper/responseParser.js"
 
 const allowedFile = ["image/png", "image/jpg", "image/jpeg"]
 

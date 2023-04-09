@@ -1,3 +1,4 @@
+console.clear()
 import "./config/loadEnv.js"
 
 /** @Library */ 

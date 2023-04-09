@@ -1,4 +1,3 @@
-import roleConfig from "../config/roleConfig.js"
 import responseParser from "../helper/responseParser.js"
 
 const checkRole = (role) => {

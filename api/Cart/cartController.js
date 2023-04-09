@@ -1,4 +1,3 @@
-import mongoose from 'mongoose'
 import responseParser from "../../helper/responseParser.js"
 import Cart from "./cartModel.js"
 

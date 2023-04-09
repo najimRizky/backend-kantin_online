@@ -1,6 +1,5 @@
 import responseParser from "../../helper/responseParser.js"
 import uploadToBucket from "../../helper/uploadToBucket.js"
-import sendEmailConfirmation from "../../server/sendEmailConfirmation.js"
 import Customer from "./customerModel.js"
 import errorHandler from "./../../helper/errorHandler.js"
 

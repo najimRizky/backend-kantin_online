@@ -41,7 +41,7 @@ const uploadToBucket = async ({ req, currentUrl }) => {
 
     return new Promise((resolve, reject) => {
         S3.send(params)
-            .then((_) => {
+            .then(() => {
                 fs.unlinkSync(path); // delete
                 const url = `${CLOUDFLARE_PUBLIC_BUCKET_URL}/${Key}`;
 
