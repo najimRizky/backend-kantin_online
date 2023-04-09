@@ -39,4 +39,20 @@ router.get(
     accountController.validateToken
 )
 
+/** @REQUEST_AND_SEND_RESET_PASSWORD_LINK */
+router.post(
+    "/request-reset-password",
+    accountValidation.requestResetPassword,
+    checkValidation,
+    accountController.requestResetPassword
+)
+
+/** @RESET_PASSWORD */
+router.post(
+    "/reset-password",
+    accountValidation.resetPassword,
+    checkValidation,
+    accountController.resetPassword
+)
+
 export default router

@@ -50,8 +50,10 @@ const tenantSchema = new Schema({
     is_open: {
         type: Boolean,
         default: true
+    },
+    reset_password_token: {
+        type: String,
     }
-
 }, { timestamps: true })
 
 
@@ -70,6 +72,12 @@ tenantSchema.statics.register = async function ({ email, password, full_name }) 
 tenantSchema.statics.addMenu = async function ({_id, newMenuId}) {
     await this.findByIdAndUpdate(_id, {$addToSet: {menus: mongoose.Types.ObjectId(newMenuId)}})
     return true
+}
+
+tenantSchema.statics.resetPassword = async function (_id, new_password) {
+    const updatedCustomer = await this.findByIdAndUpdate(_id, {$set: {password: new_password, reset_password_token: null}})
+
+    return updatedCustomer
 }
 
 export default mongoose.model("Tenant", tenantSchema)

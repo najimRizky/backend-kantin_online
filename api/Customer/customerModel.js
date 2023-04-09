@@ -33,6 +33,9 @@ const customerSchema = new Schema({
         type: String,
         required: true,
     },
+    reset_password_token: {
+        type: String,
+    }
 }, { timestamps: true })
 
 
@@ -57,6 +60,12 @@ customerSchema.statics.register = async function ({ email, password, full_name }
 
 customerSchema.statics.reduceBalance = async function (_id, nominal) {
     const updatedCustomer = await this.findByIdAndUpdate(_id, { $inc: { balance: -nominal } })
+
+    return updatedCustomer
+}
+
+customerSchema.statics.resetPassword = async function (_id, new_password) {
+    const updatedCustomer = await this.findByIdAndUpdate(_id, {$set: {password: new_password, reset_password_token: null}})
 
     return updatedCustomer
 }

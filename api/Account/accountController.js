@@ -4,8 +4,10 @@ import Tenant from "../Tenant/tenantModel.js";
 import bcrypt from "bcrypt"
 import createAccessToken from "../../helper/createAccessToken.js";
 import roleConfig from "../../config/roleConfig.js";
-import sendEmailConfirmation from "../../server/sendEmailConfirmation.js"
+import emailSender from "../../server/emailSender.js"
 import errorHandler from "./../../helper/errorHandler.js"
+import { nanoid } from "nanoid";
+import scheduler from "../../server/scheduler.js";
 
 const login = async (req, res) => {
     const { email, password } = req.body;
@@ -76,7 +78,7 @@ const register = async (req, res) => {
 
         const customer = await Customer.register({ email, password, full_name })
 
-        sendEmailConfirmation({
+        emailSender.accountConfirmation({
             email: customer.email,
             fullName: customer.full_name,
             confirmationToken: customer.confirmation_token
@@ -98,7 +100,7 @@ const register = async (req, res) => {
 const confirm = async (req, res) => {
     try {
         const { token } = req.query
-        const customer = await Customer.findOneAndUpdate({ confirmation_token: token, confirmed: false}, { confirmed: true })
+        const customer = await Customer.findOneAndUpdate({ confirmation_token: token, confirmed: false }, { confirmed: true })
 
         if (!customer) throw Error("Confirmation failed. Your account is already confirmed or invalid token||403")
 
@@ -109,8 +111,58 @@ const confirm = async (req, res) => {
     }
 }
 
-export const validateToken = async (req, res) => {
-    return responseParser({status: 200, message: "Access token is valid"}, res)
+const validateToken = async (req, res) => {
+    return responseParser({ status: 200, message: "Access token is valid" }, res)
+}
+
+const requestResetPassword = async (req, res) => {
+    try {
+        const { email } = req.body
+
+        const customer = await Customer.findOne({ email })
+        const tenant = await Tenant.findOne({ email })
+
+        if (!customer && !tenant) throw Error(`No user with email ${email} found||404`)
+
+        const user = customer ? customer : tenant
+
+        const  resetPasswordToken = user.reset_password_token || nanoid(24)
+        
+        const fullName = user.full_name
+        console.log({ resetPasswordToken })
+
+        customer ?
+            await Customer.findOneAndUpdate({ email }, { $set: { reset_password_token: resetPasswordToken } }) :
+            await Tenant.findOneAndUpdate({ email }, { $set: { reset_password_token: resetPasswordToken } })
+ 
+        emailSender.sendResetPasswordLink({ email, fullName, resetPasswordToken })
+        scheduler.assignAutoDeleteResetPasswordToken(email, resetPasswordToken)
+
+        return responseParser({ status: 200, message: `Reset password email has been sent to your email ${email}` }, res)
+    } catch (err) {
+        return errorHandler(err, res)
+    }
+}
+
+// customer only
+const resetPassword = async (req, res) => {
+    const { token, new_password } = req.body
+    try {
+        const customer = await Customer.findOne({reset_password_token: token})
+        const tenant = await Tenant.findOne({reset_password_token: token})
+
+        if (!customer && !tenant) throw Error(`Invalid token||404`)
+
+        const passwordSalt = await bcrypt.genSalt(5)
+        const passwordHash = await bcrypt.hash(new_password, passwordSalt)
+    
+        
+        customer ? await Customer.resetPassword(customer._id, passwordHash) : Tenant.resetPassword(tenant._id, passwordHash)
+
+        return responseParser({status: 200, message: "Reset password completed!"}, res)
+    } catch (err) {
+        return errorHandler(err, res)
+    }
 }
 
 export default {
@@ -118,4 +170,6 @@ export default {
     register,
     confirm,
     validateToken,
+    requestResetPassword,
+    resetPassword
 }
