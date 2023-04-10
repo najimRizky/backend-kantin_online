@@ -71,9 +71,11 @@ const tenantLogin = async ({ password, tenant }) => {
 const register = async (req, res) => {
     const { email, password, full_name } = req.body
     try {
-        const emailExist = await Customer.findOne({ email })
-        if (emailExist) {
-            throw Error("Email already registered")
+        const customerExist = await Customer.findOne({ email })
+        const tenantExist = await Tenant.findOne({ email })
+
+        if (customerExist || tenantExist) {
+            throw Error("Email already registered||409")
         }
 
         const customer = await Customer.register({ email, password, full_name })
@@ -92,7 +94,7 @@ const register = async (req, res) => {
             message: "New account created, check your email to confirm your account!"
         }, res)
     } catch (err) {
-        return responseParser({ status: 400, error: err.message }, res)
+        return errorHandler(err, res)
     }
 }
 
