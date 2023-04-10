@@ -31,7 +31,6 @@ const customerSchema = new Schema({
     },
     confirmation_token: {
         type: String,
-        required: true,
     },
     reset_password_token: {
         type: String,

@@ -102,7 +102,7 @@ const register = async (req, res) => {
 const confirm = async (req, res) => {
     try {
         const { token } = req.query
-        const customer = await Customer.findOneAndUpdate({ confirmation_token: token, confirmed: false }, { confirmed: true })
+        const customer = await Customer.findOneAndUpdate({ confirmation_token: token, confirmed: false }, { confirmed: true, confirmation_token: null })
 
         if (!customer) throw Error("Confirmation failed. Your account is already confirmed or invalid token||403")
 
