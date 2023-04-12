@@ -26,9 +26,12 @@ const register = [
         }),
     body("password")
         .exists({ checkFalsy: true })
-        .withMessage("Password is required")
         .isLength({ min: 6 })
-        .withMessage("Password min length")
+        .withMessage("Password must be included with at least 6 characters long"),
+    body("confirm_password")
+        .exists({ checkFalsy: true })
+        .custom((value, { req }) => value === req.body.password)
+        .withMessage("Confirm password must match password."),
 ]
 
 const confirm = [
@@ -55,7 +58,7 @@ const resetPassword = [
         .withMessage("Confirm password must match password."),
     body("token")
         .exists({ checkFalsy: true })
-        .isLength({min: 24})
+        .isLength({ min: 24 })
         .withMessage("Token is not included or invalid"),
 ]
 
