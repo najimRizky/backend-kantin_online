@@ -11,7 +11,8 @@ const search = async (req, res) => {
             $or: [
                 { name: { $regex: q, $options: 'i' } },
                 { description: { $regex: q, $options: 'i' } },
-            ]
+            ], 
+            is_deleted: false
         }, [
             "title",
             "description",

@@ -3,6 +3,7 @@ import nullRefIdParser from "../../config/nullRefIdParser.js"
 import responseParser from "../../helper/responseParser.js"
 import uploadToBucket from "../../helper/uploadToBucket.js"
 import Menu from "./menuModel.js"
+import errorHandler from "../../helper/errorHandler.js"
 
 const editMenu = async (req, res) => {
     try {
@@ -25,10 +26,13 @@ const editMenu = async (req, res) => {
             data.image = url
         }
 
-        await Menu.findOneAndUpdate({_id: menuId, tenant: _id}, data)
+        const editedMenu = await Menu.findOneAndUpdate({ _id: menuId, tenant: _id, is_deleted: false }, data)
+
+        if (!editedMenu) throw Error("No menu found||404") 
+
         return responseParser({ status: 200 }, res)
     } catch (err) {
-        return responseParser({ status: 404 }, res)
+        return errorHandler(err, res)
     }
 }
 
@@ -36,7 +40,7 @@ const getDetail = async (req, res) => {
     try {
         const { _id } = req.params
 
-        const menu = await Menu.findById(_id).populate("tenant", "full_name description location")
+        const menu = await Menu.findOne({_id, is_deleted: false}).populate("tenant", "full_name description location")
 
         return responseParser({ status: 200, data: menu }, res)
     } catch (err) {
@@ -49,10 +53,18 @@ const deleteMenu = async (req, res) => {
         const { _id } = req.params
         const tenant_id = req.user._id
 
-        const menu = await Menu.findOneAndDelete({_id: _id, tenant: tenant_id})
+        const menu = await Menu.findOneAndUpdate({
+            _id: _id,
+            tenant: tenant_id,
+            $or: [
+                { is_deleted: false },
+                { is_deleted: null },
+                { is_deleted: { $exists: false } }
+            ]
+        }, { $set: { is_deleted: true } })
 
-        if(!menu) throw Error
-        
+        if (!menu) throw Error
+
         return responseParser({ status: 200 }, res)
     } catch (err) {
         return responseParser({ status: 404 }, res)

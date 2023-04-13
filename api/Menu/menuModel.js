@@ -33,6 +33,10 @@ const menuSchema = new Schema({
         type: Number,
         required: true,
     },
+    is_deleted: {
+        type: Boolean,
+        default: false
+    }
 }, { timestamps: true })
 
 menuSchema.statics.addMenu = async function (_id, data) {
