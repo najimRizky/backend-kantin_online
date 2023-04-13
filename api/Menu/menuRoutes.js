@@ -47,4 +47,16 @@ router.delete(
     menuController.deleteMenu
 )
 
+router.post(
+    "/category",
+    menuValidation.addCategory,
+    checkValidation,
+    menuController.addCategory
+)
+
+router.get(
+    "/category",
+    menuController.getAllCategory,
+)
+
 export default router

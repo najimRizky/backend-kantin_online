@@ -11,6 +11,11 @@ const menuCategoryModel = new Schema({
         type: String,
         required: true,
     },
+    tenant: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: "Tenant",
+    },
 }, { timestamps: true })
 
-export default mongoose.model("Menu_Category", menuCategoryModel)
+export default mongoose.model("MenuCategory", menuCategoryModel)
