@@ -23,22 +23,6 @@ const tenantSchema = new Schema({
         type: String,
         default: ""
     },
-    reviews: [{
-        type: Schema.Types.ObjectId,
-        ref: "Review"
-    }],
-    orders: [{
-        type: Schema.Types.ObjectId,
-        rev: "Order"
-    }],
-    menu_categories: [{
-        type: Schema.Types.ObjectId,
-        ref: "Menu_Category",
-    }],
-    avg_score: {
-        type: Number,
-        default: 0
-    },
     profile_image: {
         type: String,
         default: ""
