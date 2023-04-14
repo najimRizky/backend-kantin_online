@@ -3,7 +3,6 @@ import tenantValidation from "./tenantValidation.js"
 import tenantController from "./tenantController.js"
 import checkValidation from "../../helper/checkValidation.js"
 import requireAuth from "../../validation/requireAuth.js"
-import checkRole from "../../validation/checkRole.js"
 import roleConfig from "../../config/roleConfig.js"
 
 const router = express.Router()
@@ -29,16 +28,15 @@ router.get(
     tenantController.getDetail
 )
 
-router.use(requireAuth)
-router.use(checkRole(roleConfig.tenant))
-
 router.get(
     "/profile",
+    requireAuth(roleConfig.tenant),
     tenantController.getProfile
 )
 
 router.put(
     "/profile",
+    requireAuth(roleConfig.tenant),
     tenantValidation.uploadValidation,
     tenantValidation.editProfile,
     checkValidation,

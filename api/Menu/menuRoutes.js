@@ -4,7 +4,6 @@ import menuController from "./menuController.js"
 import checkValidation from "../../helper/checkValidation.js"
 import requireAuth from "../../validation/requireAuth.js"
 import roleConfig from "../../config/roleConfig.js"
-import checkRole from "../../validation/checkRole.js"
 
 const router = express.Router()
 
@@ -18,12 +17,10 @@ router.get(
     menuController.getDetail
 )
 
-router.use(requireAuth)
-router.use(checkRole(roleConfig.tenant))
-
 /** @ADD_MENU */
 router.post(
     "/",
+    requireAuth(roleConfig.tenant),
     menuValidation.uploadValidation,
     menuValidation.addMenu,
     checkValidation,
@@ -33,6 +30,7 @@ router.post(
 /** @EDIT_MENU */
 router.put(
     "/:_id",
+    requireAuth(roleConfig.tenant),
     menuValidation.uploadValidation,
     menuValidation.editMenu,
     checkValidation,
@@ -42,6 +40,7 @@ router.put(
 /** @DELETE_MENU */
 router.delete(
     "/:_id",
+    requireAuth(roleConfig.tenant),
     menuValidation.deleteMenu,
     checkValidation,
     menuController.deleteMenu
@@ -49,6 +48,7 @@ router.delete(
 
 router.post(
     "/category",
+    requireAuth(roleConfig.tenant),
     menuValidation.addCategory,
     checkValidation,
     menuController.addCategory
@@ -56,6 +56,7 @@ router.post(
 
 router.get(
     "/category",
+    requireAuth(roleConfig.tenant),
     menuController.getAllCategory,
 )
 
