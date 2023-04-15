@@ -64,11 +64,25 @@ const addCategory = [
         .withMessage("Category description field is required"),
 ]
 
+const editCategory = [
+    param("category_id")
+        .exists({ checkFalsy: true })
+        .isMongoId()
+        .withMessage("Invalid parameter"),
+    body("title")
+        .exists({ checkFalsy: true })
+        .withMessage("Category title is required"),
+    body("description")
+        .exists()
+        .withMessage("Category description field is required"),
+]
+
 export default {
     uploadValidation,
     editMenu,
     addMenu,
     getDetail,
     deleteMenu,
-    addCategory
+    addCategory,
+    editCategory
 }

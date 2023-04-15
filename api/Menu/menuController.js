@@ -117,6 +117,27 @@ const addCategory = async (req, res) => {
     }
 }
 
+const editCategory = async (req, res) => {
+    try {
+        const tenantId = req.user._id
+        const { title, description } = req.body
+        const { category_id } = req.params
+
+        const data = {
+            title: title,
+            description: description,
+        }
+        
+        const editedMenuCategory = await MenuCategory.findOneAndUpdate({tenant: tenantId, _id: category_id }, data)
+
+        if (!editedMenuCategory) throw Error("||404")
+
+        return responseParser({status: 200}, res)
+    } catch (err) {
+        return errorHandler(err, res)
+    }
+}
+
 const getAllCategory = async (req, res) => {
     try {
         const tenantId = req.user._id
@@ -135,5 +156,6 @@ export default {
     addMenu,
     deleteMenu,
     addCategory,
-    getAllCategory
+    getAllCategory,
+    editCategory
 }

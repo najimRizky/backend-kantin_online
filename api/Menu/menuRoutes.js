@@ -46,6 +46,7 @@ router.delete(
     menuController.deleteMenu
 )
 
+/** @ADD_CATEGORY_MENU */
 router.post(
     "/category",
     requireAuth(roleConfig.tenant),
@@ -54,10 +55,19 @@ router.post(
     menuController.addCategory
 )
 
+/** @GET_CATEGORY_MENU */
 router.get(
     "/category",
     requireAuth(roleConfig.tenant),
     menuController.getAllCategory,
+)
+
+/** @EDIT_CATEGORY_MENU */
+router.put(
+    "/category/:category_id",
+    menuValidation.editCategory,
+    checkValidation,
+    menuController.editCategory,
 )
 
 export default router
