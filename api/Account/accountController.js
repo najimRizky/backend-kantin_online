@@ -80,7 +80,7 @@ const register = async (req, res) => {
 
         const customer = await Customer.register({ email, password, full_name })
 
-        emailSender.accountConfirmation({
+        emailSender.sendEmailConfirmation({
             email: customer.email,
             fullName: customer.full_name,
             confirmationToken: customer.confirmation_token
