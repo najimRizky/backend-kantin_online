@@ -55,7 +55,7 @@ const resetPassword = [
     body("confirm_new_password")
         .exists({ checkFalsy: true })
         .custom((value, { req }) => value === req.body.new_password)
-        .withMessage("Confirm password must match password."),
+        .withMessage("Confirm new password must be matched with new password."),
     body("token")
         .exists({ checkFalsy: true })
         .isLength({ min: 24 })
