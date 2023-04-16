@@ -7,7 +7,6 @@ const MONGO_DB_URI = process.env.MONGO_DB_URI
 
 const operation = retry.operation({
     retries: 5,
-    minTimeout: 1 * 1000,
     maxTimeout: 1 * 1000,
     randomize: true
 })
