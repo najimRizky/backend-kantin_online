@@ -41,11 +41,13 @@ const tenantSchema = new Schema({
 }, { timestamps: true })
 
 
-tenantSchema.statics.register = async function ({ email, password, full_name }) {
+tenantSchema.statics.register = async function ({ email, password, full_name, location, description }) {
     const dataTenant = {
         email,
         full_name,
         password,
+        location,
+        description
     }
 
     const newTenant = await this.create(dataTenant)

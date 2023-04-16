@@ -30,20 +30,20 @@ const editProfile = async (req, res) => {
 }
 
 const register = async (req, res) => {
-    const { email, password, full_name } = req.body
+    const { email, password, full_name, description, location } = req.body
 
     try {
         const emailExistCustomer = await Tenant.findOne({ email })
         const emailExistTenant = await Customer.findOne({ email })
 
         if (emailExistCustomer || emailExistTenant) {
-            throw Error("Email already registered")
+            throw Error("Email is already registered||409")
         }
 
         const passwordSalt = await bcrypt.genSalt(5)
         const passwordHash = await bcrypt.hash(password, passwordSalt)
 
-        const newTenant = await Tenant.register({ email, password: passwordHash, full_name })
+        const newTenant = await Tenant.register({ email, password: passwordHash, full_name, description, location })
 
         return responseParser({
             data: {
@@ -53,7 +53,7 @@ const register = async (req, res) => {
             message: "New tenant created"
         }, res)
     } catch (err) {
-        return responseParser({ status: 400, error: err.message }, res)
+        return errorHandler(err, res)
     }
 }
 
