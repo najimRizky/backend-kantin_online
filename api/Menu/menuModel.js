@@ -18,7 +18,7 @@ const menuSchema = new Schema({
     },
     category: {
         type: Schema.Types.ObjectId,
-        ref: "Menu_Category",
+        ref: "MenuCategory",
         default: null,
     },
     image: {

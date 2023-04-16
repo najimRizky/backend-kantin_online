@@ -6,6 +6,7 @@ import Menu from "../Menu/menuModel.js";
 import Review from "../Review/reviewModel.js";
 import bcrypt from "bcrypt"
 import errorHandler from "../../helper/errorHandler.js";
+import mongoose from "mongoose";
 
 const editProfile = async (req, res) => {
     try {
@@ -88,19 +89,57 @@ const getDetail = async (req, res) => {
 
         if (!tenant) throw Error("||404")
 
-        const menu = await Menu.find({
-            tenant: _id,
-            $or: [
-                { is_deleted: false },
-                { is_deleted: null },
-                { is_deleted: { $exists: false } }
-            ]
-        }, [
-            "title",
-            "description",
-            "category",
-            "image",
-            "price"
+        const menu = await Menu.aggregate([
+            {
+                $match: {
+                    tenant: mongoose.Types.ObjectId(_id),
+                    $or: [
+                        { is_deleted: false },
+                        { is_deleted: null },
+                        { is_deleted: { $exists: false } }
+                    ]
+                }
+            },
+            {
+                $lookup: {
+                    from: "menucategories", // Replace with the actual name of your categories collection
+                    localField: "category",
+                    foreignField: "_id",
+                    as: "category"
+                }
+            },
+            {
+                $unwind: {
+                    path: "$category",
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            {
+                $group: {
+                    _id: "$category",
+                    detail: {
+                        $push: {
+                            _id: "$_id",
+                            title: "$title",
+                            description: "$description",
+                            image: "$image",
+                            price: "$price"
+                        }
+                    }
+                }
+            },
+            {
+                $project: {
+                    category: {
+                        $ifNull: [
+                            { _id: "$_id._id", title: "$_id.title" },
+                            "No Category"
+                        ]
+                    },
+                    menus: 1,
+                    _id: 0
+                }
+            }
         ])
 
         const review = await Review
