@@ -89,7 +89,7 @@ const getDetail = async (req, res) => {
 
         if (!tenant) throw Error("||404")
 
-        const menu = await Menu.aggregate([
+        const menus = await Menu.aggregate([
             {
                 $match: {
                     tenant: mongoose.Types.ObjectId(_id),
@@ -117,7 +117,7 @@ const getDetail = async (req, res) => {
             {
                 $group: {
                     _id: "$category",
-                    detail: {
+                    menu: {
                         $push: {
                             _id: "$_id",
                             title: "$title",
@@ -133,10 +133,10 @@ const getDetail = async (req, res) => {
                     category: {
                         $ifNull: [
                             { _id: "$_id._id", title: "$_id.title" },
-                            "No Category"
+                            null
                         ]
                     },
-                    menus: 1,
+                    menu: 1,
                     _id: 0
                 }
             }
@@ -148,7 +148,7 @@ const getDetail = async (req, res) => {
 
         const avg_score = review.reduce((acc, curr) => acc + curr.rating, 0) / review.length
 
-        const respData = await { ...tenant._doc, menu, review, avg_score }
+        const respData = await { ...tenant._doc, menus, review, avg_score }
 
         return responseParser({ status: 200, data: respData }, res)
     } catch (err) {
