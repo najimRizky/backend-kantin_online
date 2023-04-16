@@ -3,7 +3,9 @@ import uploadToBucket from "../../helper/uploadToBucket.js"
 import Tenant from "./tenantModel.js"
 import Customer from "../Customer/customerModel.js";
 import Menu from "../Menu/menuModel.js";
+import Review from "../Review/reviewModel.js";
 import bcrypt from "bcrypt"
+import errorHandler from "../../helper/errorHandler.js";
 
 const editProfile = async (req, res) => {
     try {
@@ -84,7 +86,7 @@ const getDetail = async (req, res) => {
                 "is_open",
             ])
 
-        if (!tenant) throw Error
+        if (!tenant) throw Error("||404")
 
         const menu = await Menu.find({
             tenant: _id,
@@ -101,11 +103,17 @@ const getDetail = async (req, res) => {
             "price"
         ])
 
-        const respData = await { ...tenant._doc, menu }
+        const review = await Review
+            .find({ tenant: _id }, { tenant: 0 })
+            .populate("customer", ["full_name", "profile_image"])
+
+        const avg_score = review.reduce((acc, curr) => acc + curr.rating, 0) / review.length
+
+        const respData = await { ...tenant._doc, menu, review, avg_score }
 
         return responseParser({ status: 200, data: respData }, res)
     } catch (err) {
-        return responseParser({ status: 404 }, res)
+        return errorHandler(err, res)
     }
 }
 const getAll = async (_, res) => {
