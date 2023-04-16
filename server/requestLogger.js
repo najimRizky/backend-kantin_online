@@ -1,5 +1,8 @@
+import moment from "moment"
+
 const requestLogger = (req, _, next) => {
-    console.log(req.path, req.method)
+    const log = `${req.method} ${req.path} (${moment().format("DD/MMM hh:mm:ss A")})`
+    console.log(log)
     next()
 }
 

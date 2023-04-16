@@ -1,3 +1,4 @@
+import moment from "moment"
 import serverListen from "./../server/serverListen.js"
 import retry from "retry"
 
@@ -11,21 +12,21 @@ const operation = retry.operation({
 })
 
 const connectDatabase = (mongoose, server) => {
-    console.log("--- Connecting to DB ---")
+    console.log(`--- Connecting to DB --- (${moment().format("DD/MMM hh:mm:ss A")})`)
     mongoose.set("strictQuery", false)
 
     operation.attempt((currentAttempt) => {
         mongoose.connect(MONGO_DB_URI, (err) => {
             if (err) {
-                console.log("--- DB Connection Failed ---")
+                console.log(`--- DB Connection Failed --- (${moment().format("DD/MMM hh:mm:ss A")})`)
                 if (operation.retry(err)) {
-                    console.log(`--- Reconnecting to DB [${currentAttempt}] ---`)
+                    console.log(`--- Reconnecting to DB [${currentAttempt}] --- (${moment().format("DD/MMM hh:mm:ss A")}) `)
                     return
                 }
-                console.error('--- FATAL ERROR | Failed to reconnect to DB ---')
+                console.error(`--- FATAL ERROR | Failed to reconnect to DB --- (${moment().format("DD/MMM hh:mm:ss A")})`)
                 process.exit(1)
             } else {
-                console.log("--- DB Connected ---")
+                console.log(`--- DB Connected --- (${moment().format("DD/MMM hh:mm:ss A")})`)
                 serverListen(server)
             }
         })
