@@ -9,10 +9,11 @@ const search = async (req, res) => {
 
         const menu = await Menu.find({
             $or: [
-                { name: { $regex: q, $options: 'i' } },
-                { description: { $regex: q, $options: 'i' } },
-            ], 
-            is_deleted: false
+                { name: { $regex: q, $options: 'i' }, description: { $regex: q, $options: 'i' } },
+                { is_deleted: false },
+                { is_deleted: null },
+                { is_deleted: { $exists: false } }
+            ]
         }, [
             "title",
             "description",

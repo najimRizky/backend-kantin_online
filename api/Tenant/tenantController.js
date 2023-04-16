@@ -86,7 +86,14 @@ const getDetail = async (req, res) => {
 
         if (!tenant) throw Error
 
-        const menu = await Menu.find({ tenant: _id, is_deleted: false }, [
+        const menu = await Menu.find({
+            tenant: _id,
+            $or: [
+                { is_deleted: false },
+                { is_deleted: null },
+                { is_deleted: { $exists: false } }
+            ]
+        }, [
             "title",
             "description",
             "category",

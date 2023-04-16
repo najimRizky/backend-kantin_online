@@ -27,7 +27,15 @@ const editMenu = async (req, res) => {
             data.image = url
         }
 
-        const editedMenu = await Menu.findOneAndUpdate({ _id: menuId, tenant: _id, is_deleted: false }, data)
+        const editedMenu = await Menu.findOneAndUpdate({
+            _id: menuId,
+            tenant: _id,
+            $or: [
+                { is_deleted: false },
+                { is_deleted: null },
+                { is_deleted: { $exists: false } }
+            ]
+        }, data)
 
         if (!editedMenu) throw Error("No menu found||404")
 
@@ -41,7 +49,14 @@ const getDetail = async (req, res) => {
     try {
         const { _id } = req.params
 
-        const menu = await Menu.findOne({ _id, is_deleted: false }).populate("tenant", "full_name description location")
+        const menu = await Menu.findOne({
+            _id,
+            $or: [
+                { is_deleted: false },
+                { is_deleted: null },
+                { is_deleted: { $exists: false } }
+            ]
+        }).populate("tenant", "full_name description location")
 
         return responseParser({ status: 200, data: menu }, res)
     } catch (err) {
@@ -111,7 +126,7 @@ const addCategory = async (req, res) => {
 
         await MenuCategory.create(data)
 
-        return responseParser({status: 200}, res)
+        return responseParser({ status: 200 }, res)
     } catch (err) {
         return errorHandler(err, res)
     }
@@ -127,12 +142,12 @@ const editCategory = async (req, res) => {
             title: title,
             description: description,
         }
-        
-        const editedMenuCategory = await MenuCategory.findOneAndUpdate({tenant: tenantId, _id: category_id }, data)
+
+        const editedMenuCategory = await MenuCategory.findOneAndUpdate({ tenant: tenantId, _id: category_id }, data)
 
         if (!editedMenuCategory) throw Error("||404")
 
-        return responseParser({status: 200}, res)
+        return responseParser({ status: 200 }, res)
     } catch (err) {
         return errorHandler(err, res)
     }
@@ -142,9 +157,9 @@ const getAllCategory = async (req, res) => {
     try {
         const tenantId = req.user._id
 
-        const allCategory = await MenuCategory.find({tenant: tenantId})
+        const allCategory = await MenuCategory.find({ tenant: tenantId })
 
-        return responseParser({status: 200, allCategory}, res)
+        return responseParser({ status: 200, allCategory }, res)
     } catch (err) {
         return errorHandler(err, res)
     }
