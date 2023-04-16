@@ -11,7 +11,8 @@ const requireAuth = (allowedRole = undefined) => {
             }
 
             const accessToken = authorization.split(" ")[1]
-            const { _id, role, email } = jwt.verify(accessToken, process.env.JWT_SECRET)
+            const { _id, role, email } = checkJwtExpiration(accessToken)
+            
 
             if (allowedRole) {
                 checkRole(allowedRole, role)
@@ -22,6 +23,15 @@ const requireAuth = (allowedRole = undefined) => {
         } catch (err) {
             errorHandler(err, res)
         }
+    }
+}
+
+const checkJwtExpiration = (accessToken) => {
+    try {
+        const data = jwt.verify(accessToken, process.env.JWT_SECRET)
+        return data
+    } catch (err) {
+        throw Error("||401")
     }
 }
 
