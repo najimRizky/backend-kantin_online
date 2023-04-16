@@ -3,7 +3,6 @@ import "./config/loadEnv.js"
 
 /** @Library */
 import express from "express"
-import mongoose from "mongoose"
 import cors from "cors"
 
 /** @Function */
@@ -53,7 +52,7 @@ server.all("*", (req, res) => {
 
 const ENABLE_DB = eval(process.env.ENABLE_DB)
 if (ENABLE_DB) {
-    connectDatabase(mongoose, server)
+    connectDatabase(server)
 } else {
     serverListen(server)
 }

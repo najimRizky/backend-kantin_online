@@ -1,6 +1,7 @@
 import moment from "moment"
 import serverListen from "./../server/serverListen.js"
 import retry from "retry"
+import mongoose from "mongoose"
 
 const MONGO_DB_URI = process.env.MONGO_DB_URI
 
@@ -11,7 +12,7 @@ const operation = retry.operation({
     randomize: true
 })
 
-const connectDatabase = (mongoose, server) => {
+const connectDatabase = (server) => {
     console.log(`--- Connecting to DB --- (${moment().format("DD/MMM hh:mm:ss A")})`)
     mongoose.set("strictQuery", false)
 
