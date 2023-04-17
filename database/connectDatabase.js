@@ -1,36 +1,48 @@
 import moment from "moment"
-import serverListen from "./../server/serverListen.js"
-import retry from "retry"
+import { serverClose, serverListen } from "../server/serverConnection.js"
 import mongoose from "mongoose"
 
 const MONGO_DB_URI = process.env.MONGO_DB_URI
 
-const operation = retry.operation({
-    retries: 5,
-    maxTimeout: 1 * 1000,
-    randomize: true
-})
+const runConnection = async () => {
+    try {
+        console.log(`--- Connecting to DB --- (${moment().format("DD/MMM hh:mm:ss A")})`)
+        mongoose.connect(MONGO_DB_URI);
+    } catch (e) {
+        console.log("error")
+    }
+};
+
+let serverInstance
 
 const connectDatabase = (server) => {
-    console.log(`--- Connecting to DB --- (${moment().format("DD/MMM hh:mm:ss A")})`)
-    mongoose.set("strictQuery", false)
+    mongoose.set("strictQuery", false);
+    runConnection();
 
-    operation.attempt((currentAttempt) => {
-        mongoose.connect(MONGO_DB_URI, (err) => {
-            if (err) {
-                console.log(`--- DB Connection Failed --- (${moment().format("DD/MMM hh:mm:ss A")})`)
-                if (operation.retry(err)) {
-                    console.log(`--- Reconnecting to DB [${currentAttempt}] --- (${moment().format("DD/MMM hh:mm:ss A")}) `)
-                    return
-                }
-                console.error(`--- FATAL ERROR | Failed to reconnect to DB --- (${moment().format("DD/MMM hh:mm:ss A")})`)
-                process.exit(1)
-            } else {
-                console.log(`--- DB Connected --- (${moment().format("DD/MMM hh:mm:ss A")})`)
-                serverListen(server)
-            }
-        })
-    })
-}
+    mongoose.connection.on("connected", function () {
+        console.log(`--- DB Connected --- (${moment().format("DD/MMM hh:mm:ss A")})`)
+        serverInstance = serverListen(server)
+    });
+
+    mongoose.connection.on("error", function () {
+        setTimeout(() => {
+            console.log(`--- Reconnecting to DB --- (${moment().format("DD/MMM hh:mm:ss A")}) `)
+            runConnection();
+        }, 1000);
+        console.error(`--- FATAL ERROR | Failed to Connect to DB --- (${moment().format("DD/MMM hh:mm:ss A")})`)
+    });
+
+    mongoose.connection.on("disconnected", function () {
+        serverClose(serverInstance)
+        console.error(`--- FATAL ERROR | DB Disconnected --- (${moment().format("DD/MMM hh:mm:ss A")})`)
+    });
+
+    process.on("SIGINT", function () {
+        mongoose.connection.close();
+        serverClose(serverInstance)
+        console.error(`--- DB Disconnected --- (${moment().format("DD/MMM hh:mm:ss A")})`)
+        process.exit();
+    });
+};
 
 export default connectDatabase

@@ -8,7 +8,7 @@ import cors from "cors"
 /** @Function */
 import responseParser from "./helper/responseParser.js"
 import connectDatabase from "./database/connectDatabase.js"
-import serverListen from "./server/serverListen.js"
+import { serverListen } from "./server/serverConnection.js"
 import requestLogger from "./server/requestLogger.js"
 
 /** @Routes */
