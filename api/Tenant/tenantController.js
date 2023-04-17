@@ -82,7 +82,6 @@ const getDetail = async (req, res) => {
                 "full_name",
                 "description",
                 "label",
-                "avg_score",
                 "location",
                 "is_open",
             ])
@@ -142,13 +141,14 @@ const getDetail = async (req, res) => {
             }
         ])
 
-        const review = await Review
+        const reviews = await Review
             .find({ tenant: _id }, { tenant: 0 })
             .populate("customer", ["full_name", "profile_image"])
 
-        const avg_score = review.reduce((acc, curr) => acc + curr.rating, 0) / review.length
+        const rating = reviews.reduce((acc, curr) => acc + curr.rating, 0) / reviews.length || 0
+        const total_review = reviews.length
 
-        const respData = await { ...tenant._doc, menus, review, avg_score }
+        const respData = await { ...tenant._doc, menus, reviews, rating, total_review }
 
         return responseParser({ status: 200, data: respData }, res)
     } catch (err) {
@@ -157,19 +157,31 @@ const getDetail = async (req, res) => {
 }
 const getAll = async (_, res) => {
     try {
-        const tenant = await Tenant.find({}, [
-            "profile_image",
-            "full_name",
-            "description",
-            "label",
-            "avg_score",
-            "location",
-            "is_open",
-        ])
+        const allTenant = await Tenant.aggregate([
+            {
+              $lookup: {
+                from: 'reviews',
+                localField: '_id',
+                foreignField: 'tenant',
+                as: 'reviews'
+              }
+            },
+            {
+              $project: {
+                _id: 1,
+                full_name: 1,
+                description: 1,
+                location: 1,
+                profile_image: 1,
+                total_review: { $size: '$reviews' },
+                rating: { $ifNull: [{$avg: '$reviews.rating'}, 0] }
+              }
+            }
+          ])
 
-        if (!tenant) throw Error
+        if (!allTenant) throw Error
 
-        return responseParser({ status: 200, data: tenant }, res)
+        return responseParser({ status: 200, data: allTenant }, res)
     } catch (err) {
         return responseParser({ status: 404 }, res)
     }
