@@ -30,7 +30,7 @@ const editProfile = [
     body("email")
         .exists({ checkFalsy: true })
         .isEmail()
-        .isEmail("Email is not included or invalid email"),
+        .withMessage("Email is not included or invalid email"),
 ]
 
 const updateBalance = [

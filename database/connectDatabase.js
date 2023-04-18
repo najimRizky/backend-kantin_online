@@ -33,7 +33,10 @@ const connectDatabase = (server) => {
     });
 
     mongoose.connection.on("disconnected", function () {
-        serverClose(serverInstance)
+        if (serverInstance !== undefined) {
+            serverClose(serverInstance)
+            serverInstance = undefined
+        }
         console.error(`--- FATAL ERROR | DB Disconnected --- (${moment().format("DD/MMM hh:mm:ss A")})`)
     });
 

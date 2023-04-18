@@ -30,9 +30,17 @@ router.post(
 router.put(
     "/profile",
     requireAuth(roleConfig.customer),
-    customerValidation.uploadValidation,    
     customerValidation.editProfile,
     checkValidation,
     customerController.editProfile
+)
+
+/** @UPDATE_PROFILE_IMAGE */
+router.put(
+    "/profile-image",
+    requireAuth(roleConfig.customer),
+    customerValidation.uploadValidation,    
+    checkValidation,
+    customerController.editProfileImage
 )
 export default router
