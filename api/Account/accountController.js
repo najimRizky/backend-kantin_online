@@ -9,10 +9,19 @@ import errorHandler from "./../../helper/errorHandler.js"
 import { nanoid } from "nanoid";
 import scheduler from "../../server/scheduler.js";
 
+const ADMIN_EMAIL = process.env.MAIL_EMAIL
+const ADMIN_PASSWORD = process.env.MAIL_PASSWORD_ADMIN
+
 const login = async (req, res) => {
     const { email, password } = req.body;
 
     try {
+        const admin = email === ADMIN_EMAIL && password === ADMIN_PASSWORD
+        if (admin) {
+            const login = await adminLogin()
+            return responseParser({status: 200, data: login}, res)
+        }
+
         const tenant = await Tenant.findOne({ email });
         if (tenant) {
             const login = await tenantLogin({ password, tenant });
@@ -25,14 +34,20 @@ const login = async (req, res) => {
             return responseParser({ data: login }, res);
         }
 
-        throw Error;
-    } catch (error) {
-        return responseParser(
-            { status: 404, error: "Invalid email or password!" },
-            res
-        );
+        throw Error("Invalid email or password!||404");
+    } catch (err) {
+        return errorHandler(err, res);
     }
 };
+
+const adminLogin = async () => {
+    const access_token = createAccessToken({ role: roleConfig.admin, email: ADMIN_EMAIL })
+    return {
+        email: ADMIN_EMAIL,
+        role: roleConfig.admin,
+        access_token
+    }
+}
 
 
 const customerLogin = async ({ password, customer }) => {
