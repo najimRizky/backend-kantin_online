@@ -12,14 +12,8 @@ const editProfile = async (req, res) => {
     try {
         const { _id } = req.user
         const { full_name, location, description } = req.body
-        const { profile_image } = await Tenant.findById(_id, ["profile_image"])
 
         const data = { full_name, location, description }
-
-        if (req.file) {
-            const url = await uploadToBucket({ req, currentUrl: profile_image })
-            data.profile_image = url
-        }
 
         await Tenant.findByIdAndUpdate(_id, data)
         return responseParser({ status: 200 }, res)
@@ -159,25 +153,25 @@ const getAll = async (_, res) => {
     try {
         const allTenant = await Tenant.aggregate([
             {
-              $lookup: {
-                from: 'reviews',
-                localField: '_id',
-                foreignField: 'tenant',
-                as: 'reviews'
-              }
+                $lookup: {
+                    from: 'reviews',
+                    localField: '_id',
+                    foreignField: 'tenant',
+                    as: 'reviews'
+                }
             },
             {
-              $project: {
-                _id: 1,
-                full_name: 1,
-                description: 1,
-                location: 1,
-                profile_image: 1,
-                total_review: { $size: '$reviews' },
-                rating: { $ifNull: [{$avg: '$reviews.rating'}, 0] }
-              }
+                $project: {
+                    _id: 1,
+                    full_name: 1,
+                    description: 1,
+                    location: 1,
+                    profile_image: 1,
+                    total_review: { $size: '$reviews' },
+                    rating: { $ifNull: [{ $avg: '$reviews.rating' }, 0] }
+                }
             }
-          ])
+        ])
 
         if (!allTenant) throw Error
 
@@ -187,10 +181,26 @@ const getAll = async (_, res) => {
     }
 }
 
+const editProfileImage = async (req, res) => {
+    try {
+        const { _id } = req.user
+        const { profile_image } = await Tenant.findById(_id, ["profile_image"])
+
+        const url = await uploadToBucket({ req, currentUrl: profile_image })
+        const newProfileImage = url
+        await Tenant.findByIdAndUpdate(_id, { profile_image: newProfileImage })
+
+        return responseParser({ status: 200 }, res)
+    } catch (err) {
+        return errorHandler(err, res)
+    }
+}
+
 export default {
     editProfile,
     getProfile,
     register,
     getDetail,
-    getAll
+    getAll,
+    editProfileImage
 }

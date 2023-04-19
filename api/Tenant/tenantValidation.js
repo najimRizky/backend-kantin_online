@@ -29,12 +29,14 @@ const editProfile = [
         }),
     body("description")
         .exists()
-        .custom((value) => {
-            if (!validTenantName.test(value)) throw new Error("Invalid description")
-            return true
-        }),
+        .withMessage("Description field is required"),
     body("location")
         .exists()
+        .withMessage("Location field is required"),
+    body("email")
+        .exists({ checkFalsy: true })
+        .isEmail()
+        .withMessage("Email is not included or invalid email"),
 ]
 
 const register = [

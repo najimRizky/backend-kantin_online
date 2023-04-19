@@ -42,9 +42,18 @@ router.get(
 router.put(
     "/profile",
     requireAuth(roleConfig.tenant),
-    tenantValidation.uploadValidation,
     tenantValidation.editProfile,
     checkValidation,
     tenantController.editProfile
 )
+
+/** @UPDATE_PROFILE_IMAGE_TENANT */
+router.put(
+    "/profile-image",
+    requireAuth(roleConfig.tenant),
+    tenantValidation.uploadValidation,
+    checkValidation,
+    tenantController.editProfileImage
+)
+
 export default router
