@@ -7,9 +7,9 @@ const MONGO_DB_URI = process.env.MONGO_DB_URI
 const runConnection = async () => {
     try {
         console.log(`--- Connecting to DB --- (${moment().format("DD/MMM hh:mm:ss A")})`)
-        mongoose.connect(MONGO_DB_URI);
-    } catch (e) {
-        console.log("error")
+        await mongoose.connect(MONGO_DB_URI);
+    } catch (err) {
+        console.log("--- Connecting failed")
     }
 };
 
@@ -25,19 +25,19 @@ const connectDatabase = (server) => {
     });
 
     mongoose.connection.on("error", function () {
+        console.error(`--- FATAL ERROR | Failed to Connect to DB --- (${moment().format("DD/MMM hh:mm:ss A")})`)
         setTimeout(() => {
             console.log(`--- Reconnecting to DB --- (${moment().format("DD/MMM hh:mm:ss A")}) `)
             runConnection();
         }, 1000);
-        console.error(`--- FATAL ERROR | Failed to Connect to DB --- (${moment().format("DD/MMM hh:mm:ss A")})`)
     });
 
     mongoose.connection.on("disconnected", function () {
+        console.error(`--- FATAL ERROR | DB Disconnected --- (${moment().format("DD/MMM hh:mm:ss A")})`)
         if (serverInstance !== undefined) {
             serverClose(serverInstance)
             serverInstance = undefined
         }
-        console.error(`--- FATAL ERROR | DB Disconnected --- (${moment().format("DD/MMM hh:mm:ss A")})`)
     });
 
     process.on("SIGINT", function () {
