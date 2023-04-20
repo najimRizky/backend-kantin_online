@@ -9,14 +9,6 @@ const router = express.Router()
 
 /** @see /tenant */
 
-/** @REGISTER_TENANT */
-router.post(
-    "/register",
-    tenantValidation.register,
-    checkValidation,
-    tenantController.register
-)
-
 /** @GET_ALL_TENANT */
 router.get(
     "/",

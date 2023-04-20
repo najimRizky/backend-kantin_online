@@ -88,8 +88,9 @@ const register = async (req, res) => {
     try {
         const customerExist = await Customer.findOne({ email })
         const tenantExist = await Tenant.findOne({ email })
+        const adminExist = email === ADMIN_EMAIL
 
-        if (customerExist || tenantExist) {
+        if (customerExist || tenantExist || adminExist) {
             throw Error("Email already registered||409")
         }
 

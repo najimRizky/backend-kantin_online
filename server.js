@@ -20,6 +20,7 @@ import menuRoutes from "./api/Menu/menuRoutes.js"
 import otherRoutes from "./api/Other/otherRoutes.js"
 import cartRoutes from "./api/Cart/cartRoutes.js"
 import orderRoutes from "./api/Order/orderRoutes.js"
+import adminRoutes from "./api/Admin/adminRoutes.js"
 
 /** @Initialization */
 const server = express()
@@ -39,6 +40,7 @@ server.use("/tenant", tenantRoutes)
 server.use("/menu", menuRoutes)
 server.use("/cart", cartRoutes)
 server.use("/order", orderRoutes)
+server.use("/admin", adminRoutes)
 
 
 server.all("*", (req, res) => {
