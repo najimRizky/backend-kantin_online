@@ -1,7 +1,7 @@
 import responseParser from "./responseParser.js"
 
 const errorHandler = (err, res) => {
-    const customError = err.message.includes("||") 
+    const customError = err.message?.includes("||") 
 
     const error = customError ? err.message.split("||") : err.message
     
