@@ -30,6 +30,54 @@ const registerTenant = async (req, res) => {
     }
 }
 
+const allTenant = async (req, res) => {
+    try {
+        const allTenant = await Tenant.aggregate([
+            {
+                $lookup: {
+                    from: 'reviews',
+                    localField: '_id',
+                    foreignField: 'tenant',
+                    as: 'reviews'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'orders',
+                    localField: '_id',
+                    foreignField: 'tenant',
+                    as: 'orders'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'menus',
+                    localField: '_id',
+                    foreignField: 'tenant',
+                    as: 'menus'
+                }
+            },
+            {
+                $project: {
+                    _id: 1,
+                    full_name: 1,
+                    description: 1,
+                    location: 1,
+                    profile_image: 1,
+                    total_review: { $size: '$reviews' },
+                    rating: { $ifNull: [{ $avg: '$reviews.rating' }, 0] },
+                    total_order: { $size: '$orders' },
+                    total_menu: { $size: '$menus' }
+                }
+            }
+        ])
+        return responseParser({ status: 200, data: allTenant }, res)
+    } catch (err) {
+        return errorHandler(err, res)
+    }
+}
+
 export default {
-    registerTenant
+    registerTenant,
+    allTenant
 }

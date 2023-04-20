@@ -18,4 +18,10 @@ router.post(
     adminController.registerTenant
 )
 
+/** @REGISTER_TENANT */
+router.get(
+    "/tenant",
+    adminController.allTenant
+)
+
 export default router
