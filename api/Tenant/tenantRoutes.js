@@ -48,4 +48,13 @@ router.put(
     tenantController.editProfileImage
 )
 
+/** @UPDATE_PROFILE_IMAGE_TENANT */
+router.put(
+    "/change-password",
+    requireAuth(roleConfig.tenant),
+    tenantValidation.changePassword,
+    checkValidation,
+    tenantController.changePassword
+)
+
 export default router

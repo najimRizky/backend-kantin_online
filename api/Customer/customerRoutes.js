@@ -43,4 +43,13 @@ router.put(
     checkValidation,
     customerController.editProfileImage
 )
+
+/** @UPDATE_PROFILE_IMAGE */
+router.put(
+    "/change-password",
+    requireAuth(roleConfig.customer),
+    customerValidation.changePassword,
+    checkValidation,
+    customerController.changePassword
+)
 export default router

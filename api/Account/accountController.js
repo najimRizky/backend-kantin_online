@@ -53,7 +53,7 @@ const adminLogin = async () => {
 const customerLogin = async ({ password, customer }) => {
     const match = await bcrypt.compare(password, customer.password)
     if (!match) {
-        throw Error
+        throw Error("Invalid email or password!||404")
     }
     const access_token = createAccessToken({ _id: customer._id, role: roleConfig.customer, email: customer.email })
 
@@ -69,7 +69,7 @@ const customerLogin = async ({ password, customer }) => {
 const tenantLogin = async ({ password, tenant }) => {
     const match = await bcrypt.compare(password, tenant.password)
     if (!match) {
-        throw Error
+        throw Error("Invalid email or password!||404")
     }
     const access_token = createAccessToken({ _id: tenant._id, role: roleConfig.tenant, email: tenant.email })
 

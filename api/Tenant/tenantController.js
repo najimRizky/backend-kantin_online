@@ -196,11 +196,43 @@ const editProfileImage = async (req, res) => {
     }
 }
 
+const changePassword = async (req, res) => {
+    try {
+        const { password, new_password, confirm_new_password } = req.body
+        const { _id } = req.user
+
+        if (new_password !== confirm_new_password) {
+            throw Error("New password and confirm new password must be the same||400")
+        }
+
+        const tenant = await Tenant.findById(_id, ["password"])
+
+        if (!tenant) {
+            throw Error("Tenant not found||404")
+        }
+
+        const isCorrectPassword = await bcrypt.compare(password, tenant?.password)
+
+        if (!isCorrectPassword) {
+            throw Error("Old password is incorrect||400")
+        }
+
+        const hashedNewPassword = await bcrypt.hash(new_password, 5)
+
+        await Tenant.findByIdAndUpdate(_id, { password: hashedNewPassword })
+
+        return responseParser({ status: 200 }, res)
+    } catch (err) {
+        return errorHandler(err, res)
+    }
+}
+
 export default {
     editProfile,
     getProfile,
     register,
     getDetail,
     getAll,
-    editProfileImage
+    editProfileImage,
+    changePassword
 }
