@@ -41,8 +41,23 @@ const updateBalance = [
         .withMessage("Minumum amount is 0")
 ]
 
+const changePassword = [
+    body("password")
+        .exists({ checkFalsy: true })
+        .withMessage("Password must be included"),
+    body("new_password")
+        .exists({ checkFalsy: true })
+        .isLength({ min: 6 })
+        .withMessage("New password must be included with at least 6 characters long."),
+    body("confirm_new_password")
+        .exists({ checkFalsy: true })
+        .isLength({ min: 6 })
+        .withMessage("Confirm new password must be included with at least 6 characters long."),
+]
+
 export default {
     uploadValidation,
     editProfile,
-    updateBalance
+    updateBalance,
+    changePassword
 }
