@@ -2,6 +2,8 @@ import errorHandler from "../../helper/errorHandler.js"
 import responseParser from "../../helper/responseParser.js"
 import Customer from "../Customer/customerModel.js"
 import Tenant from "../Tenant/tenantModel.js"
+import Menu from "../Menu/menuModel.js"
+import Order from "../Order/orderModel.js"
 
 const ADMIN_EMAIL = process.env.MAIL_EMAIL
 
@@ -77,7 +79,95 @@ const allTenant = async (req, res) => {
     }
 }
 
+const detailTenant = async (req, res) => {
+    try {
+        const { _id } = req.params
+
+        const tenant = await Tenant.findById(_id, [
+            "full_name",
+            "description",
+            "location",
+            "profile_image",
+            "email"
+        ])
+        const menus = await Menu.find({ tenant: _id }).populate("category", ["title"])
+        const orders = await Order.find({ tenant: _id })
+            .populate("customer", ["full_name"])
+            .populate("items.menu", ["title"])
+            .populate("review", ["rating", "content"])
+
+        const data = {
+            ...tenant._doc,
+            menus,
+            orders
+        }
+
+        return responseParser({ status: 200, data }, res)
+    } catch (err) {
+        return errorHandler(err, res)
+    }
+}
+
+const allCustomer = async (req, res) => {
+    try {
+        const allCustomer = await Customer.aggregate([
+            {
+                $lookup: {
+                    from: 'orders',
+                    localField: '_id',
+                    foreignField: 'customer',
+                    as: 'orders'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'reviews',
+                    localField: '_id',
+                    foreignField: 'customer',
+                    as: 'reviews'
+                }
+            },
+            {
+                $project: {
+                    _id: 1,
+                    full_name: 1,
+                    email: 1,
+                    profile_image: 1,
+                    total_order: { $size: '$orders' },
+                    total_review: { $size: '$reviews' },
+                }
+            }
+        ])
+
+        return responseParser({ status: 200, data: allCustomer }, res)
+    } catch (err) {
+        return errorHandler(err, res)
+    }
+}
+
+const detailCustomer = async (req, res) => {
+    try {
+        const { _id } = req.params
+        const customer = await Customer.findById(_id, [
+            "full_name",
+            "email",
+            "profile_image"
+        ])
+
+        const data = {
+            ...customer._doc
+        }
+
+        return responseParser({ status: 200, data  }, res)
+    } catch (err) {
+        return errorHandler(err, res)
+    }
+}
+
 export default {
     registerTenant,
-    allTenant
+    allTenant,
+    detailTenant,
+    allCustomer,
+    detailCustomer
 }

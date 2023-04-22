@@ -18,10 +18,32 @@ router.post(
     adminController.registerTenant
 )
 
-/** @REGISTER_TENANT */
+/** @GET_ALL_TENANT */
 router.get(
     "/tenant",
+    requireAuth(roleConfig.admin),
     adminController.allTenant
+)
+
+/** @GET_DETAIL_TENANT */
+router.get(
+    "/tenant/:_id",
+    requireAuth(roleConfig.admin),
+    adminController.detailTenant
+)
+
+/** @GET_ALL_CUSTOMER */
+router.get(
+    "/customer",
+    requireAuth(roleConfig.admin),
+    adminController.allCustomer
+)
+
+/** @GET_DETAIL_CUSTOMER */
+router.get(
+    "/customer/:_id",
+    requireAuth(roleConfig.admin),
+    adminController.detailCustomer
 )
 
 export default router
