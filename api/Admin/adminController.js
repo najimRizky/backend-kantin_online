@@ -148,14 +148,22 @@ const allCustomer = async (req, res) => {
 const detailCustomer = async (req, res) => {
     try {
         const { _id } = req.params
-        const customer = await Customer.findById(_id, [
-            "full_name",
-            "email",
-            "profile_image"
-        ])
+        const customer = await Customer.findById(_id, {
+            password: 0,
+            __v: 0,
+            confirmation_token: 0,
+            confirmed: 0,
+            reset_password_token: 0,
+        })
+
+        const orders = await Order.find({ customer: _id })
+            .populate("tenant", ["full_name", "profile_image"])
+            .populate("items.menu", ["title"])
+            .populate("review", ["rating", "content"])
 
         const data = {
-            ...customer._doc
+            ...customer._doc,
+            orders
         }
 
         return responseParser({ status: 200, data  }, res)
