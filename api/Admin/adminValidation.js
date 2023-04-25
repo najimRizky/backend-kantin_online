@@ -65,8 +65,16 @@ const editTenant = [
         .withMessage("Location field is required"),
 ]
 
+const deleteTenant = [
+    param("_id")
+        .exists({ checkFalsy: true })
+        .isMongoId()
+        .withMessage("Tenant id is not included or invalid id"),
+]
+
 export default {
     uploadValidationProfileImage,
     registerTenant,
-    editTenant
+    editTenant,
+    deleteTenant
 }

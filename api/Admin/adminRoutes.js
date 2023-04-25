@@ -42,6 +42,14 @@ router.put(
     checkValidation,
     adminController.editTenant
 )
+
+/** @EDIT_TENANT */
+router.delete(
+    "/tenant/:_id",
+    adminValidation.deleteTenant,
+    checkValidation,
+    adminController.deleteTenant
+)
 // END OF TENANT
 
 // CUSTOMER

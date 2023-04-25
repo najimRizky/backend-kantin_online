@@ -85,7 +85,9 @@ const detailTenant = async (req, res) => {
     try {
         const { _id } = req.params
 
-        const tenant = await Tenant.findById(_id, [
+        const tenant = await Tenant.findOne({
+            _id: _id,
+        }, [
             "full_name",
             "description",
             "location",
@@ -135,14 +137,24 @@ const editTenant = async (req, res) => {
 
         const editedTenant = await Tenant.findOneAndUpdate({
             _id: _id,
-            $or: [
-                { is_deleted: false },
-                { is_deleted: null },
-                { is_deleted: { $exists: false } }
-            ]
         }, data)
 
         if (!editedTenant) throw Error("Tenant not found||404")
+
+        return responseParser({ status: 200 }, res)
+    } catch (err) {
+        return errorHandler(err, res)
+    }
+}
+
+const deleteTenant = async (req, res) => {
+    try {
+        const { _id } = req.params
+        const deletedTenant = await Tenant.findOneAndUpdate({
+            _id: _id,
+        }, { is_deleted: true })
+
+        if (!deletedTenant) throw Error("Tenant not found||404")
 
         return responseParser({ status: 200 }, res)
     } catch (err) {
@@ -219,6 +231,7 @@ export default {
     allTenant,
     detailTenant,
     editTenant,
+    deleteTenant,
 
     allCustomer,
     detailCustomer
