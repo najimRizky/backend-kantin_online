@@ -7,6 +7,7 @@ import Review from "../Review/reviewModel.js";
 import bcrypt from "bcrypt"
 import errorHandler from "../../helper/errorHandler.js";
 import mongoose from "mongoose";
+import { isNotDeleted } from "../../config/queryConfig.js";
 
 const editProfile = async (req, res) => {
     try {
@@ -86,11 +87,7 @@ const getDetail = async (req, res) => {
             {
                 $match: {
                     tenant: mongoose.Types.ObjectId(_id),
-                    $or: [
-                        { is_deleted: false },
-                        { is_deleted: null },
-                        { is_deleted: { $exists: false } }
-                    ]
+                    $or: isNotDeleted
                 }
             },
             {

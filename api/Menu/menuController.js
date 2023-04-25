@@ -5,6 +5,7 @@ import uploadToBucket from "../../helper/uploadToBucket.js"
 import Menu from "./menuModel.js"
 import errorHandler from "../../helper/errorHandler.js"
 import MenuCategory from "../MenuCategory/menuCategoryModel.js"
+import { isNotDeleted } from "../../config/queryConfig.js"
 
 const editMenu = async (req, res) => {
     try {
@@ -30,11 +31,7 @@ const editMenu = async (req, res) => {
         const editedMenu = await Menu.findOneAndUpdate({
             _id: menuId,
             tenant: _id,
-            $or: [
-                { is_deleted: false },
-                { is_deleted: null },
-                { is_deleted: { $exists: false } }
-            ]
+            $or: isNotDeleted
         }, data)
 
         if (!editedMenu) throw Error("No menu found||404")
@@ -51,11 +48,7 @@ const getDetail = async (req, res) => {
 
         const menu = await Menu.findOne({
             _id,
-            $or: [
-                { is_deleted: false },
-                { is_deleted: null },
-                { is_deleted: { $exists: false } }
-            ]
+            $or: isNotDeleted
         }).populate("tenant", "full_name description location")
 
         return responseParser({ status: 200, data: menu }, res)
@@ -72,11 +65,7 @@ const deleteMenu = async (req, res) => {
         const menu = await Menu.findOneAndUpdate({
             _id: _id,
             tenant: tenant_id,
-            $or: [
-                { is_deleted: false },
-                { is_deleted: null },
-                { is_deleted: { $exists: false } }
-            ]
+            $or: isNotDeleted
         }, { $set: { is_deleted: true } })
 
         if (!menu) throw Error
