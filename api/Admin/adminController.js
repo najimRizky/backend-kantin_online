@@ -4,6 +4,7 @@ import Customer from "../Customer/customerModel.js"
 import Tenant from "../Tenant/tenantModel.js"
 import Menu from "../Menu/menuModel.js"
 import Order from "../Order/orderModel.js"
+import uploadToBucket from "../../helper/uploadToBucket.js"
 
 const ADMIN_EMAIL = process.env.MAIL_EMAIL
 
@@ -66,6 +67,7 @@ const allTenant = async (req, res) => {
                     description: 1,
                     location: 1,
                     profile_image: 1,
+                    email: 1,
                     total_review: { $size: '$reviews' },
                     rating: { $ifNull: [{ $avg: '$reviews.rating' }, 0] },
                     total_order: { $size: '$orders' },
@@ -103,6 +105,46 @@ const detailTenant = async (req, res) => {
         }
 
         return responseParser({ status: 200, data }, res)
+    } catch (err) {
+        return errorHandler(err, res)
+    }
+}
+
+const editTenant = async (req, res) => {
+    try {
+        const { _id } = req.params
+        const { full_name, description, location, email } = req.body
+
+        const data = {
+            full_name,
+            description,
+            location,
+            email,
+        }
+
+        console.log(req.file)
+
+        if (req.file) {
+            const { profile_image } = await Tenant.findById(_id, ["profile_image"])
+
+            if (!profile_image) throw Error("Tenant not found||404")
+
+            const newUrl = await uploadToBucket({ req, currentUrl: profile_image })
+            data.profile_image = newUrl
+        }
+
+        const editedTenant = await Tenant.findOneAndUpdate({
+            _id: _id,
+            $or: [
+                { is_deleted: false },
+                { is_deleted: null },
+                { is_deleted: { $exists: false } }
+            ]
+        }, data)
+
+        if (!editedTenant) throw Error("Tenant not found||404")
+
+        return responseParser({ status: 200 }, res)
     } catch (err) {
         return errorHandler(err, res)
     }
@@ -166,7 +208,7 @@ const detailCustomer = async (req, res) => {
             orders
         }
 
-        return responseParser({ status: 200, data  }, res)
+        return responseParser({ status: 200, data }, res)
     } catch (err) {
         return errorHandler(err, res)
     }
@@ -176,6 +218,8 @@ export default {
     registerTenant,
     allTenant,
     detailTenant,
+    editTenant,
+
     allCustomer,
     detailCustomer
 }

@@ -9,6 +9,7 @@ const router = express.Router()
 
 /** @see /admin */
 
+// TENANT
 /** @REGISTER_TENANT */
 router.post(
     "/tenant/register",
@@ -32,6 +33,18 @@ router.get(
     adminController.detailTenant
 )
 
+/** @EDIT_TENANT */
+router.put(
+    "/tenant/:_id",
+    requireAuth(roleConfig.admin),
+    adminValidation.uploadValidationProfileImage,
+    adminValidation.editTenant,
+    checkValidation,
+    adminController.editTenant
+)
+// END OF TENANT
+
+// CUSTOMER
 /** @GET_ALL_CUSTOMER */
 router.get(
     "/customer",
@@ -45,5 +58,6 @@ router.get(
     requireAuth(roleConfig.admin),
     adminController.detailCustomer
 )
+// END OF CUSTOMER
 
 export default router
