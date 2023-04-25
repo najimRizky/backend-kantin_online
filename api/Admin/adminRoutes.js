@@ -68,4 +68,11 @@ router.get(
 )
 // END OF CUSTOMER
 
+//ORDERS
+router.get(
+    "/order",
+    requireAuth(roleConfig.admin),
+    adminController.allOrder
+)
+
 export default router

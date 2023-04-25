@@ -124,8 +124,6 @@ const editTenant = async (req, res) => {
             email,
         }
 
-        console.log(req.file)
-
         if (req.file) {
             const { profile_image } = await Tenant.findById(_id, ["profile_image"])
 
@@ -226,6 +224,20 @@ const detailCustomer = async (req, res) => {
     }
 }
 
+const allOrder = async (_, res) => {
+    try {
+        const allOrder = await Order.find()
+            .populate("tenant", ["full_name", "profile_image"])
+            .populate("customer", ["full_name"])
+            .populate("items.menu", ["title"])
+            .populate("review", ["rating", "content"])
+
+        return responseParser({ status: 200, data: allOrder }, res)
+    } catch (err) {
+        return errorHandler(err, res)
+    }
+}
+
 export default {
     registerTenant,
     allTenant,
@@ -234,5 +246,7 @@ export default {
     deleteTenant,
 
     allCustomer,
-    detailCustomer
+    detailCustomer,
+
+    allOrder
 }
