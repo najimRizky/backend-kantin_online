@@ -77,4 +77,13 @@ router.get(
 )
 // END OF ORDER
 
+// MENU
+/** @GET_ALL_MENU */
+router.get(
+    "/menu",
+    requireAuth(roleConfig.admin),
+    adminController.allMenu
+)
+// END OF MENU
+
 export default router

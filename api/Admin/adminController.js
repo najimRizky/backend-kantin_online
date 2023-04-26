@@ -238,6 +238,18 @@ const allOrder = async (_, res) => {
     }
 }
 
+const allMenu = async (req, res) => {
+    try {
+        const allMenu = await Menu.find()
+        .populate("category", ["title"])
+        .populate("tenant", ["full_name"])
+        
+        return responseParser({ status: 200, data: allMenu }, res)
+    } catch (err) {
+        return errorHandler(err, res)
+    }
+}
+
 export default {
     registerTenant,
     allTenant,
@@ -248,5 +260,7 @@ export default {
     allCustomer,
     detailCustomer,
 
-    allOrder
+    allOrder,
+
+    allMenu
 }
