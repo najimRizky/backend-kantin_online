@@ -7,13 +7,18 @@ import Review from "../Review/reviewModel.js";
 import bcrypt from "bcrypt"
 import errorHandler from "../../helper/errorHandler.js";
 import mongoose from "mongoose";
+import isEmailExist from "../../helper/isEmailExist.js";
 
 const editProfile = async (req, res) => {
     try {
         const { _id } = req.user
-        const { full_name, location, description } = req.body
+        const { full_name, location, description, email } = req.body
 
-        const data = { full_name, location, description }
+        if (await isEmailExist(email)) {
+            throw Error("Email already used||409")
+        }
+
+        const data = { full_name, location, email, description }
 
         await Tenant.findByIdAndUpdate(_id, data)
         return responseParser({ status: 200 }, res)

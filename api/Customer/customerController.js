@@ -3,6 +3,7 @@ import uploadToBucket from "../../helper/uploadToBucket.js"
 import Customer from "./customerModel.js"
 import errorHandler from "./../../helper/errorHandler.js"
 import bcrypt from "bcrypt"
+import isEmailExist from "../../helper/isEmailExist.js"
 
 const editProfileImage = async (req, res) => {
     try {
@@ -23,6 +24,10 @@ const editProfile = async (req, res) => {
     try {
         const { _id } = req.user
         const { full_name, email } = req.body
+
+        if (await isEmailExist(email)) {
+            throw Error("Email already used||409")
+        }
 
         const data = { full_name, email }
 
