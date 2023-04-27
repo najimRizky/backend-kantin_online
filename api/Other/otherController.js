@@ -1,4 +1,3 @@
-import { isNotDeleted } from "../../config/queryConfig.js"
 import errorHandler from "../../helper/errorHandler.js"
 import responseParser from "../../helper/responseParser.js"
 import Menu from "./../Menu/menuModel.js"
@@ -17,7 +16,6 @@ const search = async (req, res) => {
                         { description: { $regex: q, $options: 'i' } }
                     ]
                 },
-                { $or: isNotDeleted }
             ]
         }, [
             "title",

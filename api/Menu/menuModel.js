@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { isNotDeleted } from "../../config/queryConfig.js";
 
 const Schema = mongoose.Schema
 
@@ -48,5 +49,16 @@ menuSchema.statics.addMenu = async function (_id, data) {
     }
 
 }
+
+menuSchema.pre(["find", "findOne", "fingOneAndUpdate"], function (next) {
+    const existingFilters = this.getFilter()
+    this.where({ ...existingFilters, $or: isNotDeleted })
+    next()
+})
+
+menuSchema.pre("aggregate", function (next) {
+    this.pipeline().unshift({ $match: { $or: isNotDeleted } })
+    next()
+})
 
 export default mongoose.model("Menu", menuSchema)
