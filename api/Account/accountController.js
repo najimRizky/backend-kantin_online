@@ -8,6 +8,7 @@ import emailSender from "../../server/emailSender.js"
 import errorHandler from "./../../helper/errorHandler.js"
 import { nanoid } from "nanoid";
 import scheduler from "../../server/scheduler.js";
+import isEmailExist from "../../helper/isEmailExist.js";
 
 const ADMIN_EMAIL = process.env.MAIL_EMAIL
 const ADMIN_PASSWORD = process.env.MAIL_PASSWORD_ADMIN
@@ -86,12 +87,8 @@ const tenantLogin = async ({ password, tenant }) => {
 const register = async (req, res) => {
     const { email, password, full_name } = req.body
     try {
-        const customerExist = await Customer.findOne({ email })
-        const tenantExist = await Tenant.findOne({ email })
-        const adminExist = email === ADMIN_EMAIL
-
-        if (customerExist || tenantExist || adminExist) {
-            throw Error("Email already registered||409")
+        if (await isEmailExist(email)) {
+            throw Error("Email already used||409")
         }
 
         const customer = await Customer.register({ email, password, full_name })
@@ -154,7 +151,7 @@ const requestResetPassword = async (req, res) => {
             await Tenant.findOneAndUpdate({ email }, { $set: { reset_password_token: resetPasswordToken } })
  
         emailSender.sendResetPasswordLink({ email, fullName, resetPasswordToken })
-        scheduler.assignAutoDeleteResetPasswordToken(email, resetPasswordToken)
+        scheduler.assignAutoDeleteResetPasswordToken(user?._id, resetPasswordToken)
 
         return responseParser({ status: 200, message: `Reset password email has been sent to your email ${email}` }, res)
     } catch (err) {

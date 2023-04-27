@@ -15,10 +15,10 @@ const removeAutoRejectOrder = (order_id) => {
     console.log(`Auto cancelation for Order ${order_id} was removed`)
 }
 
-const assignAutoDeleteResetPasswordToken = (email, token) => {
-    schedule.scheduleJob(email, new Date(Date.now() + (30 * 60 * 1000)), async () => {
-        await Tenant.findOneAndUpdate({email, reset_password_token: token}, {reset_password_token: null})
-        await Customer.findOneAndUpdate({email, reset_password_token: token}, {reset_password_token: null})
+const assignAutoDeleteResetPasswordToken = (user_id, token) => {
+    schedule.scheduleJob(user_id, new Date(Date.now() + (30 * 60 * 1000)), async () => {
+        await Tenant.findOneAndUpdate({_id: user_id, reset_password_token: token}, {reset_password_token: null})
+        await Customer.findOneAndUpdate({_id: user_id, reset_password_token: token}, {reset_password_token: null})
     })
 }
 
