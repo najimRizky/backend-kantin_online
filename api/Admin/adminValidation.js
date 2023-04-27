@@ -105,6 +105,13 @@ const editMenu = [
         .withMessage("Price field is required"),
 ]
 
+const deleteMenu = [
+    param("_id")
+        .exists({ checkFalsy: true })
+        .isMongoId()
+        .withMessage("Menu id is not included or invalid id"),
+]
+
 
 export default {
     uploadValidationProfileImage,
@@ -112,5 +119,6 @@ export default {
     registerTenant,
     editTenant,
     deleteTenant,
-    editMenu
+    editMenu,
+    deleteMenu
 }

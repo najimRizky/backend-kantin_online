@@ -277,6 +277,21 @@ const editMenu = async (req, res) => {
     }
 }
 
+const deleteMenu = async (req, res) => {
+    try {
+        const { _id } = req.params
+        const deletedMenu = await Menu.findOneAndUpdate({
+            _id: _id,
+        }, { is_deleted: true })
+        
+        if (!deletedMenu) throw Error("Menu not found||404")
+
+        return responseParser({ status: 200 }, res)
+    } catch (err) {
+        return errorHandler(err, res)
+    }
+}
+
 export default {
     registerTenant,
     allTenant,
@@ -290,5 +305,6 @@ export default {
     allOrder,
 
     allMenu,
-    editMenu
+    editMenu,
+    deleteMenu
 }

@@ -94,6 +94,15 @@ router.put(
     checkValidation,
     adminController.editMenu
 )
+
+/** @DELETE_MENU */
+router.delete(
+    "/menu/:_id",
+    adminValidation.deleteMenu,
+    checkValidation,
+    adminController.deleteMenu
+)
+
 // END OF MENU
 
 export default router
