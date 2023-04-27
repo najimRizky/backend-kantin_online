@@ -51,6 +51,11 @@ menuSchema.statics.addMenu = async function (_id, data) {
 }
 
 menuSchema.pre(["find", "findOne", "fingOneAndUpdate"], function (next) {
+    const { skipMiddleware } = this.getOptions()
+    if (skipMiddleware) {
+        return next()
+    } 
+
     const existingFilters = this.getFilter()
     this.where({ ...existingFilters, $or: isNotDeleted })
     next()

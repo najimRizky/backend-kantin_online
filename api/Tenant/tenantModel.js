@@ -7,6 +7,7 @@ const tenantSchema = new Schema({
     email: {
         type: String,
         required: true,
+        unique: true,
     },
     full_name: {
         type: String,
@@ -72,6 +73,11 @@ tenantSchema.statics.resetPassword = async function (_id, new_password) {
 }
 
 tenantSchema.pre(["find", "findOne", "findOneAndUpdate"], function (next) {
+    const { skipMiddleware } = this.getOptions()
+    if (skipMiddleware) {
+        return next()
+    } 
+
     const existingFilters = this.getFilter()
     this.where({ ...existingFilters, $or: isNotDeleted })
     next()
