@@ -52,11 +52,7 @@ const registerTenant = [
         .withMessage("Description field is required"),
     body("location")
         .exists()
-        .withMessage("Location field is required"),
-    body("password")
-        .exists({ checkFalsy: true })
-        .isLength({ min: 6 })
-        .withMessage("Password must be included with at least 6 characters long")
+        .withMessage("Location field is required")
 ]
 
 const editTenant = [

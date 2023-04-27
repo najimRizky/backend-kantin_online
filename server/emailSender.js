@@ -4,9 +4,10 @@ import mailTransporter from "../config/mailTransporter.js"
 const BASE_URL_BE = process.env.BASE_URL_BE
 const BASE_URL_FE = process.env.BASE_URL_FE
 
+const transporter = nodemailer.createTransport(mailTransporter)
+
 const sendEmailConfirmation = ({ email, fullName, confirmationToken }) => {
     try {
-        const transporter = nodemailer.createTransport(mailTransporter)
         const confirmationLink = `${BASE_URL_BE}/account/confirm?token=${confirmationToken}`
         const mailOptions = {
             to: email,
@@ -40,7 +41,7 @@ const sendEmailConfirmation = ({ email, fullName, confirmationToken }) => {
                 console.log(error.message);
                 // res.status(500).json({ message: "Failed to send email" })
             } else {
-                console.log('Email sent: ' + info.response);
+                console.log('Cuatomer email confirmation sent: ' + info.response);
                 // res.status(200).json({ message: "Ok" })
             }
         });
@@ -51,7 +52,6 @@ const sendEmailConfirmation = ({ email, fullName, confirmationToken }) => {
 
 const sendResetPasswordLink = ({ email, fullName, resetPasswordToken }) => {
     try {
-        const transporter = nodemailer.createTransport(mailTransporter)
         const resetPasswordLink = `${BASE_URL_FE}/account/reset-password?token=${resetPasswordToken}`
         const mailOptions = {
             to: email,
@@ -95,7 +95,46 @@ const sendResetPasswordLink = ({ email, fullName, resetPasswordToken }) => {
     }
 }
 
+const sendRegisterTenantEmail = ({ email, fullName, password }) => {
+    try {
+        const mailOptions = {
+            to: email,
+            subject: "Kantin UMN Register Tenant",
+            html: `
+            <div style="font-family: Arial, sans-serif; background-color: #f1f1f1; padding: 20px;">
+                <table cellpadding="0" cellspacing="0" border="0" align="center" width="100%" style="max-width: 600px; margin: 0 auto; background-color: #fff; padding: 20px;">
+                    <tr>
+                        <td>
+                            <h1 style="text-align: center; margin-top: 0;">Kantin UMN Register Tenant</h1>
+                            <p>Dear Tenant "${fullName}", thank you for joining Kantin UMN</p>
+                            <p>Here is your account information:</p>
+                            <div style="margin-top: 20px;">
+                                <p>Email: ${email}</p>
+                                <p>Password: ${password}</p>
+                            </div>                    
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            `
+        }
+
+        transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+                console.log(error.message);
+            } else {
+                console.log('Tenant account comfirmation email sent: ' + info.response);
+            }
+        });
+    } catch (err) {
+        console.log(err)
+    }
+}
+
+
+
 export default {
     sendEmailConfirmation,
-    sendResetPasswordLink
+    sendResetPasswordLink,
+    sendRegisterTenantEmail
 }

@@ -5,29 +5,33 @@ import Tenant from "../Tenant/tenantModel.js"
 import Menu from "../Menu/menuModel.js"
 import Order from "../Order/orderModel.js"
 import uploadToBucket from "../../helper/uploadToBucket.js"
-
-const ADMIN_EMAIL = process.env.MAIL_EMAIL
+import isEmailExist from "../../helper/isEmailExist.js"
+import { nanoid } from "nanoid"
+import bcrypt from "bcrypt"
+import emailSender from "../../server/emailSender.js"
 
 const registerTenant = async (req, res) => {
-    const { email, full_name, description, location, password } = req.body
-
     try {
-        const customerExist = await Customer.findOne({ email })
-        const tenantExist = await Tenant.findOne({ email })
-        const adminExist = email === ADMIN_EMAIL
+        const { email, full_name, description, location } = req.body
 
-        if (customerExist || tenantExist || adminExist) {
-            throw Error("Email already registered||409")
+        if (await isEmailExist(email)) {
+            throw Error("Email already used||409")
         }
 
-        const tenant = await Tenant.create({
+        const randomPassword = await nanoid(10)
+        const hashedPassword = await bcrypt.hash(randomPassword, 5)
+
+        const newTenant = await Tenant.create({
             email,
             full_name,
             description,
             location,
-            password
+            password: hashedPassword
         })
-        return responseParser({ status: 201, data: tenant }, res)
+
+        emailSender.sendRegisterTenantEmail({ email, fullName: full_name, password: randomPassword })
+
+        return responseParser({ status: 201, data: newTenant }, res)
     } catch (err) {
         return errorHandler(err, res)
     }
