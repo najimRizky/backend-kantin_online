@@ -126,9 +126,6 @@ const editTenant = async (req, res) => {
 
         if (req.file) {
             const { profile_image } = await Tenant.findById(_id, ["profile_image"])
-
-            if (!profile_image) throw Error("Tenant not found||404")
-
             const newUrl = await uploadToBucket({ req, currentUrl: profile_image })
             data.profile_image = newUrl
         }
@@ -250,6 +247,36 @@ const allMenu = async (req, res) => {
     }
 }
 
+const editMenu = async (req, res) => {
+    try {
+        const { _id } = req.params
+        const { title, description, price, category } = req.body
+
+        const data = {
+            title,
+            description,
+            price,
+            category
+        }
+
+        if (req.file) {
+            const { image } = await Menu.findById(_id, ["image"])
+            const newUrl = await uploadToBucket({ req, currentUrl: image })
+            data.image = newUrl
+        }
+
+        const editedMenu = await Menu.findOneAndUpdate({
+            _id: _id,
+        }, data)
+
+        if (!editedMenu) throw Error("Menu not found||404")
+
+        return responseParser({ status: 200 }, res)
+    } catch (err) {
+        return errorHandler(err, res)
+    }
+}
+
 export default {
     registerTenant,
     allTenant,
@@ -262,5 +289,6 @@ export default {
 
     allOrder,
 
-    allMenu
+    allMenu,
+    editMenu
 }

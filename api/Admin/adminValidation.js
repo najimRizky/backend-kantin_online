@@ -20,6 +20,22 @@ const uploadValidationProfileImage = async (req, res, next) => {
     })
 }
 
+const uploadValidationMenuImage = async (req, res, next) => {
+    uploadConfig.single("image")(req, res, (err) => {
+        try {
+            if (err instanceof multer.MulterError) {
+                throw Error("File is too large, maximum 2MB")
+            } else if (err) {
+                throw Error("File not supported")
+            } else {
+                next()
+            }
+        } catch (err) {
+            return responseParser({ status: 400, error: err.message }, res)
+        }
+    }) 
+}
+
 const registerTenant = [
     body("email")
         .exists({ checkFalsy: true })
@@ -72,9 +88,29 @@ const deleteTenant = [
         .withMessage("Tenant id is not included or invalid id"),
 ]
 
+const editMenu = [
+    param("_id")
+        .exists({ checkFalsy: true })
+        .isMongoId()
+        .withMessage("Menu id is not included or invalid id"),
+    body("title")
+        .exists({ checkFalsy: true })
+        .isString()
+        .withMessage("Title is not included"),
+    body("description")
+        .exists()
+        .withMessage("Description field is required"),
+    body("price")
+        .exists()
+        .withMessage("Price field is required"),
+]
+
+
 export default {
     uploadValidationProfileImage,
+    uploadValidationMenuImage,
     registerTenant,
     editTenant,
-    deleteTenant
+    deleteTenant,
+    editMenu
 }

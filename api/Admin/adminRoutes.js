@@ -84,6 +84,16 @@ router.get(
     requireAuth(roleConfig.admin),
     adminController.allMenu
 )
+
+/** @EDIT_MENU */
+router.put(
+    "/menu/:_id",
+    requireAuth(roleConfig.admin),
+    adminValidation.uploadValidationMenuImage,
+    adminValidation.editMenu,
+    checkValidation,
+    adminController.editMenu
+)
 // END OF MENU
 
 export default router
