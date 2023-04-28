@@ -54,19 +54,24 @@ router.patch(
     orderController.finishOrder
 )
 
-/** @GET_ALL_ORDER */
+/** @GET_ALL_ON_PROGRESS_ORDER */
 router.get(
-    "/",
-    requireAuth,
-    // orderValidation.finishOrder,
-    // checkValidation,
-    orderController.getAllOrder
+    "/on-progress",
+    requireAuth(),
+    orderController.getAllOnProgressOrder
+)
+
+/** @GET_ALL_COMPLETED_ORDER */
+router.get(
+    "/completed",
+    requireAuth(),
+    orderController.getAllCompletedOrder
 )
 
 /** @GET_SINGLE_ORDER */
 router.get(
     "/:_id",
-    requireAuth,
+    requireAuth(),
     orderValidation.getSingleOrder,
     checkValidation,
     orderController.getSingleOrder

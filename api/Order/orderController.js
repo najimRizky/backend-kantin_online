@@ -32,7 +32,7 @@ const createOrder = async (req, res) => {
                 quantity: item.quantity,
                 price: item.menu.price
             })),
-            status: "pending",
+            status: "created",
             total_price: totalPrice,
             payment_method: payment_method
         }
@@ -117,12 +117,26 @@ const finishOrder = async (req, res) => {
     }
 }
 
-const getAllOrder = async (req, res) => {
+const getAllOnProgressOrder = async (req, res) => {
+    try {
+        console.log("sini")
+        const user_id = req.user._id //Tenant or Customer
+        const role = req.user.role //Tenant or Customer
+
+        const orders = await Order.getAllOnProgressOrder(role, user_id)
+
+        return responseParser({ status: 200, data: orders }, res)
+    } catch (err) {
+        return errorHandler(err, res)
+    }
+}
+
+const getAllCompletedOrder = async (req, res) => {
     try {
         const user_id = req.user._id //Tenant or Customer
         const role = req.user.role //Tenant or Customer
 
-        const orders = await Order.getAllOrder(role, user_id)
+        const orders = await Order.getAllCompletedOrder(role, user_id)
 
         return responseParser({ status: 200, data: orders }, res)
     } catch (err) {
@@ -208,7 +222,8 @@ export default {
     rejectOrder,
     serveOrder,
     finishOrder,
-    getAllOrder,
+    getAllOnProgressOrder,
+    getAllCompletedOrder,
     getSingleOrder,
     addReview
 }

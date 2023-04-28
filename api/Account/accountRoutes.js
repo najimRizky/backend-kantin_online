@@ -35,7 +35,7 @@ router.get(
 /** @CHECK_ACCESS_TOKEN_VALIDITY */
 router.get(
     "/validate-token",
-    requireAuth,
+    requireAuth(),
     accountController.validateToken
 )
 
