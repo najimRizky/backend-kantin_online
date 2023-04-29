@@ -121,8 +121,12 @@ const editTenant = async (req, res) => {
         const { _id } = req.params
         const { full_name, description, location, email } = req.body
 
-        if (await isEmailExist(email)) {
-            throw Error("Email already used||409")
+        const currentTenant = await Tenant.findById(_id, ["email"])
+
+        if ( currentTenant.email !== email ) {
+            if (await isEmailExist(email)) {
+                throw Error("Email already used||409")
+            }
         }
 
         const data = {
