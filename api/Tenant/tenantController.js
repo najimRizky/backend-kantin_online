@@ -132,7 +132,9 @@ const getDetail = async (req, res) => {
                     menu: 1,
                     _id: 0
                 }
-            }
+            }, {
+                $sort: { "category.title": -1 },
+            },
         ])
 
         const reviews = await Review
