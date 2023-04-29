@@ -87,7 +87,7 @@ const getDetail = async (req, res) => {
 
         if (!tenant) throw Error("||404")
 
-        const menus = await Menu.aggregate([
+        const tenant_menu = await Menu.aggregate([
             {
                 $match: {
                     tenant: mongoose.Types.ObjectId(_id),
@@ -142,7 +142,7 @@ const getDetail = async (req, res) => {
         const rating = reviews.reduce((acc, curr) => acc + curr.rating, 0) / reviews.length || 0
         const total_review = reviews.length
 
-        const respData = await { ...tenant._doc, menus, reviews, rating, total_review }
+        const respData = await { ...tenant._doc, tenant_menu, reviews, rating, total_review }
 
         return responseParser({ status: 200, data: respData }, res)
     } catch (err) {
