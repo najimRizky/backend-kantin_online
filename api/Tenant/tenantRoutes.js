@@ -15,12 +15,12 @@ router.get(
     tenantController.getAll
 )
 
-/** @GET_DETAIL_TENANT */
+
+/** @TENANT_HOME_DASHBOARD */
 router.get(
-    "/:_id",
-    tenantValidation.getDetail,
-    checkValidation,
-    tenantController.getDetail
+    "/dashboard",
+    requireAuth(roleConfig.tenant),
+    tenantController.dashboard
 )
 
 /** @GET_PROFILE_TENANT */
@@ -28,6 +28,14 @@ router.get(
     "/profile",
     requireAuth(roleConfig.tenant),
     tenantController.getProfile
+)
+
+/** @GET_DETAIL_TENANT */
+router.get(
+    "/:_id",
+    tenantValidation.getDetail,
+    checkValidation,
+    tenantController.getDetail
 )
 
 /** @UPDATE_PROFILE_TENANT */

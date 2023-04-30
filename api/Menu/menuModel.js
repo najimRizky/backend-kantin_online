@@ -37,6 +37,10 @@ const menuSchema = new Schema({
     is_deleted: {
         type: Boolean,
         default: false
+    },
+    is_available: {
+        type: Boolean,
+        default: false
     }
 }, { timestamps: true })
 

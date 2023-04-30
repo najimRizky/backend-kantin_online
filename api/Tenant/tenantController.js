@@ -8,6 +8,7 @@ import bcrypt from "bcrypt"
 import errorHandler from "../../helper/errorHandler.js";
 import mongoose from "mongoose";
 import isEmailExist from "../../helper/isEmailExist.js";
+import moment from "moment";
 
 const editProfile = async (req, res) => {
     try {
@@ -229,6 +230,69 @@ const changePassword = async (req, res) => {
     }
 }
 
+const dashboard = async (req, res) => {
+    try {
+        const { _id } = req.user
+
+        const tenant = await Tenant.aggregate([
+            {
+                $match: {
+                    _id: mongoose.Types.ObjectId(_id)
+                }
+            },
+            {
+                $lookup: {
+                    from: 'reviews',
+                    localField: '_id',
+                    foreignField: 'tenant',
+                    as: 'reviews'
+                }
+            },
+            {
+                $lookup: {
+                    from: "orders",
+                    localField: "_id",
+                    foreignField: "tenant",
+                    as: "orders"
+                }
+            },
+            {
+                $project: {
+                    _id: 1,
+                    full_name: 1,
+                    email: 1,
+                    profile_image: 1,
+                    description: 1,
+                    balance: 1,
+                    total_order: { $size: '$orders' },
+                    total_order_today: {
+                        $size: {
+                            $filter: {
+                                input: "$orders",
+                                as: "order",
+                                cond: {
+                                    $and: [
+                                        { $gte: ["$$order.createdAt", moment().startOf('day').toDate()] },
+                                        { $lt: ["$$order.createdAt", moment().endOf('day').toDate()] }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    rating: { $ifNull: [{ $avg: '$reviews.rating' }, 0] },
+                    total_review: { $size: '$reviews' },
+                }
+            }
+        ])
+
+        if (!tenant) throw Error("||404")
+
+        return responseParser({ status: 200, data: tenant[0] }, res)
+    } catch (err) {
+        return errorHandler(err, res)
+    }
+}
+
 export default {
     editProfile,
     getProfile,
@@ -236,5 +300,6 @@ export default {
     getDetail,
     getAll,
     editProfileImage,
-    changePassword
+    changePassword,
+    dashboard
 }
