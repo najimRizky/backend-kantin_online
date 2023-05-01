@@ -7,22 +7,24 @@ import Cart from "./../Cart/cartModel.js"
 import Order from "./orderModel.js"
 import Customer from "./../Customer/customerModel.js"
 import Review from "./../Review/reviewModel.js"
+import Tenant from "./../Tenant/tenantModel.js"
 
 const createOrder = async (req, res) => {
     const session = await mongoose.startSession()
     try {
         session.startTransaction()
 
-        const { cart_id, payment_method } = req.body
+        const { cart_id } = req.body
         const customer_id = req.user._id
 
         const cart = await Cart.findOne({ _id: cart_id, customer: customer_id }).populate("items.menu")
         if (!cart) throw Error("||404")
 
         const totalPrice = calculateTotalPrice(cart.items)
+        const totalPrepDuration = calculateTotalPrepDuration(cart.items)
         const customerBalance = await Customer.findById(customer_id, ["balance"])
 
-        if (customerBalance < totalPrice) throw Error("||402")
+        if (customerBalance.balance < totalPrice) throw Error("Not enough balance||402")
 
         const newOrder = {
             customer: cart.customer,
@@ -34,7 +36,7 @@ const createOrder = async (req, res) => {
             })),
             status: "created",
             total_price: totalPrice,
-            payment_method: payment_method
+            total_prep_duration: totalPrepDuration,
         }
         const createdOrder = await Order.createOrder(newOrder)
         // await Cart.clearCartById(cart_id)
@@ -103,7 +105,10 @@ const serveOrder = async (req, res) => {
 }
 
 const finishOrder = async (req, res) => {
+    const session = await mongoose.startSession()
     try {
+        session.startTransaction()
+
         const { _id } = req.params
         const tenant_id = req.user._id
 
@@ -111,15 +116,22 @@ const finishOrder = async (req, res) => {
 
         if (!completedOrder) throw Error("||404")
 
+        await Tenant.addBalance(tenant_id, completedOrder.total_price)
+
+        await session.commitTransaction()
+        session.endSession()
+
         return responseParser({ status: 200 }, res)
     } catch (err) {
+        await session.commitTransaction()
+        session.endSession()
+
         return errorHandler(err, res)
     }
 }
 
 const getAllOnProgressOrder = async (req, res) => {
     try {
-        console.log("sini")
         const user_id = req.user._id //Tenant or Customer
         const role = req.user.role //Tenant or Customer
 
@@ -214,6 +226,16 @@ const calculateTotalPrice = (items) => {
     })
 
     return totalPrice
+}
+
+const calculateTotalPrepDuration = (items) => {
+    let totalPrepDuration = 0
+
+    items.map((item) => {
+        totalPrepDuration += (item.quantity * item.menu.prep_duration)
+    })
+
+    return totalPrepDuration
 }
 
 export default {

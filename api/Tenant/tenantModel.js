@@ -72,6 +72,12 @@ tenantSchema.statics.resetPassword = async function (_id, new_password) {
     return updatedCustomer
 }
 
+tenantSchema.statics.addBalance = async function (_id, amount) {
+    const updatedTenant = await this.findByIdAndUpdate(_id, { $inc: { balance: amount } })
+
+    return updatedTenant
+}
+
 tenantSchema.pre(["find", "findOne", "findOneAndUpdate"], function (next) {
     const { skipMiddleware } = this.getOptions()
     if (skipMiddleware) {

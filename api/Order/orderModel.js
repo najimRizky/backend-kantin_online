@@ -65,9 +65,12 @@ const orderSchema = new Schema({
         type: Number,
         required: true
     },
+    total_prep_duration: {
+        type: Number,
+        required: true
+    },
     payment_method: {
         type: String,
-        required: true,
         default: ""
     }
 }, { timestamps: true })
@@ -85,21 +88,21 @@ orderSchema.statics.confirmOrder = async function (_id, tenant_id) {
 }
 
 orderSchema.statics.rejectOrder = async function (_id, tenant_id) {
-    const confirmedOrder = await this.findOneAndUpdate({ _id, tenant: tenant_id, status: { $in: ["created", "preparing"] } }, { status: "rejected", "progress.rejected": new Date() })
+    const rejectedOrder = await this.findOneAndUpdate({ _id, tenant: tenant_id, status: { $in: ["created", "preparing"] } }, { status: "rejected", "progress.rejected": new Date() })
 
-    return confirmedOrder
+    return rejectedOrder
 }
 
 orderSchema.statics.serveOrder = async function (_id, tenant_id) {
-    const confirmedOrder = await this.findOneAndUpdate({ _id, tenant: tenant_id, status: "preparing" }, { status: "ready", "progress.ready": new Date() })
+    const servedOrder = await this.findOneAndUpdate({ _id, tenant: tenant_id, status: "preparing" }, { status: "ready", "progress.ready": new Date() })
 
-    return confirmedOrder
+    return servedOrder
 }
 
 orderSchema.statics.finishOrder = async function (_id, tenant_id) {
-    const confirmedOrder = await this.findOneAndUpdate({ _id, tenant: tenant_id, status: "ready" }, { status: "completed", "progress.completed": new Date() })
+    const completedOrder = await this.findOneAndUpdate({ _id, tenant: tenant_id, status: "ready" }, { status: "completed", "progress.completed": new Date() })
 
-    return confirmedOrder
+    return completedOrder
 }
 
 orderSchema.statics.getSingleOrder = async function (_id, role, user_id) {
@@ -142,14 +145,35 @@ orderSchema.statics.getAllOnProgressOrder = async function (role, user_id) {
         }
     ];
 
-    const allOrder = await this.find(
+    const createdOrder = await this.find(
         {
             [role]: user_id,
-            status: { $in: ["created", "preparing", "ready"] }
+            status: "created"
         },
         { [role]: 0 },
-
     ).populate(populateFields);
+
+    const preparingOrder = await this.find(
+        {
+            [role]: user_id,
+            status: "preparing"
+        },
+        { [role]: 0 },
+    ).populate(populateFields);
+
+    const readyOrder = await this.find(
+        {
+            [role]: user_id,
+            status: "ready"
+        },
+        { [role]: 0 },
+    ).populate(populateFields);
+    
+    const allOrder = {
+        created: createdOrder,
+        preparing: preparingOrder,
+        ready: readyOrder
+    };
 
     return allOrder;
 }

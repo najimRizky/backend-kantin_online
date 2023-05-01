@@ -15,9 +15,9 @@ const PARAM_ORDER_ID = param("_id")
 
 const createOrder = [
     BODY_CART_ID,
-    body("payment_method")
-        .exists({ checkFalsy: true })
-        .withMessage("payment_method is required")
+    // body("payment_method")
+    //     .exists({ checkFalsy: true })
+    //     .withMessage("payment_method is required")
 ]
 
 const confirmOrder = [
