@@ -262,13 +262,14 @@ const allMenu = async (req, res) => {
 const editMenu = async (req, res) => {
     try {
         const { _id } = req.params
-        const { title, description, price, category } = req.body
+        const { title, description, price, category, prep_duration } = req.body
 
         const data = {
             title,
             description,
             price,
-            category
+            category,
+            prep_duration
         }
 
         if (req.file) {

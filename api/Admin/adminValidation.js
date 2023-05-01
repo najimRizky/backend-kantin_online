@@ -99,6 +99,10 @@ const editMenu = [
     body("price")
         .exists()
         .withMessage("Price field is required"),
+    body("prep_duration")
+        .exists({ checkFalsy: true })
+        .isInt()
+        .withMessage("Preparation duration is not included or invalid"),
 ]
 
 const deleteMenu = [
