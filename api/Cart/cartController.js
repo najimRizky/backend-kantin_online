@@ -1,11 +1,17 @@
 import responseParser from "../../helper/responseParser.js"
 import Cart from "./cartModel.js"
+import Menu from "./../Menu/menuModel.js"
+import errorHandler from "../../helper/errorHandler.js"
 
 const addItem = async (req, res) => {
     try {
         const customer_id = req.user._id
         const { tenant_id } = req.params
         const { menu_id, quantity } = req.body
+
+        const menu = await Menu.findOne({ _id: menu_id, tenant: tenant_id })
+
+        if (!menu) throw Error("||404")
 
         const cart = await Cart.findOne({
             tenant: tenant_id,
@@ -26,7 +32,7 @@ const addItem = async (req, res) => {
 
         return responseParser({ status: 200 }, res)
     } catch (err) {
-        return responseParser({ status: 500 }, res)
+        return errorHandler(err, res)
     }
 }
 
