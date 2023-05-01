@@ -38,7 +38,7 @@ router.patch(
 
 /** @SERVE_ORDER */
 router.patch(
-    "/serve/:_id",
+    "/ready/:_id",
     requireAuth(roleConfig.tenant),
     orderValidation.serveOrder,
     checkValidation,
@@ -47,7 +47,7 @@ router.patch(
 
 /** @FINISH_ORDER */
 router.patch(
-    "/finish/:_id",
+    "/complete/:_id",
     requireAuth(roleConfig.tenant),
     orderValidation.finishOrder,
     checkValidation,
