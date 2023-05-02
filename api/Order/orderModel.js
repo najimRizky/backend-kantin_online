@@ -168,7 +168,7 @@ orderSchema.statics.getAllOnProgressOrder = async function (role, user_id) {
         },
         { [role]: 0 },
     ).populate(populateFields);
-    
+
     const allOrder = {
         created: createdOrder,
         preparing: preparingOrder,
@@ -179,7 +179,7 @@ orderSchema.statics.getAllOnProgressOrder = async function (role, user_id) {
 }
 
 
-orderSchema.statics.getAllCompletedOrder = async function (role, user_id) {
+orderSchema.statics.getAllOrder = async function (role, user_id) {
     const populateFields = [
         {
             path: 'items.menu',
@@ -195,13 +195,9 @@ orderSchema.statics.getAllCompletedOrder = async function (role, user_id) {
         }
     ];
 
-    const allOrder = await this.find(
-        {
-            [role]: user_id,
-            status: { $in: ["completed", "rejected"] },
-        },
-        { [role]: 0 },
-    ).populate(populateFields);
+    const allOrder = await this.find({ [role]: user_id }, { [role]: 0 })
+    .populate(populateFields)
+    .sort({ "progress.created": -1 });
 
     return allOrder;
 }

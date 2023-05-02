@@ -143,12 +143,12 @@ const getAllOnProgressOrder = async (req, res) => {
     }
 }
 
-const getAllCompletedOrder = async (req, res) => {
+const getAllOrder = async (req, res) => {
     try {
         const user_id = req.user._id //Tenant or Customer
         const role = req.user.role //Tenant or Customer
 
-        const orders = await Order.getAllCompletedOrder(role, user_id)
+        const orders = await Order.getAllOrder(role, user_id)
 
         return responseParser({ status: 200, data: orders }, res)
     } catch (err) {
@@ -245,7 +245,7 @@ export default {
     serveOrder,
     finishOrder,
     getAllOnProgressOrder,
-    getAllCompletedOrder,
+    getAllOrder,
     getSingleOrder,
     addReview
 }
