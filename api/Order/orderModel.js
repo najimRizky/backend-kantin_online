@@ -129,7 +129,10 @@ orderSchema.statics.getSingleOrder = async function (_id, role, user_id) {
     return singleOrder;
 }
 
-orderSchema.statics.getAllOnProgressOrder = async function (role, user_id) {
+orderSchema.statics.getAllOnProgressOrder = async function (role, user_id, priority) {
+    const sortType = priority === "fcfs" ? { "progress.created": -1 }
+        : priority === "sjf" ? { "prep_duration": 1 } : { "progress.created": -1 };
+
     const populateFields = [
         {
             path: 'items.menu',
@@ -151,7 +154,7 @@ orderSchema.statics.getAllOnProgressOrder = async function (role, user_id) {
             status: "created"
         },
         { [role]: 0 },
-    ).populate(populateFields);
+    ).populate(populateFields).sort(sortType);
 
     const preparingOrder = await this.find(
         {
@@ -196,8 +199,8 @@ orderSchema.statics.getAllOrder = async function (role, user_id) {
     ];
 
     const allOrder = await this.find({ [role]: user_id }, { [role]: 0 })
-    .populate(populateFields)
-    .sort({ "progress.created": -1 });
+        .populate(populateFields)
+        .sort({ "progress.created": -1 });
 
     return allOrder;
 }

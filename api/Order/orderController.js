@@ -135,7 +135,9 @@ const getAllOnProgressOrder = async (req, res) => {
         const user_id = req.user._id //Tenant or Customer
         const role = req.user.role //Tenant or Customer
 
-        const orders = await Order.getAllOnProgressOrder(role, user_id)
+        const { priority } = req.query
+
+        const orders = await Order.getAllOnProgressOrder(role, user_id, priority)
 
         return responseParser({ status: 200, data: orders }, res)
     } catch (err) {
