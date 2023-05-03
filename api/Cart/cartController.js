@@ -68,6 +68,10 @@ const removeItem = async (req, res) => {
         const { tenant_id } = req.params
         const { menu_id } = req.body
 
+        const item = await Cart.getSingleCartSingleItem({ tenant_id, customer_id, menu_id })
+
+        if (!item) throw Error("Item not found||404")
+
         await Cart.removeItem({ tenant_id, customer_id, menu_id })
 
         const updatedCart = await Cart.getSingleCartItem({ tenant_id, customer_id })
@@ -78,7 +82,7 @@ const removeItem = async (req, res) => {
 
         return responseParser({ status: 200 }, res)
     } catch (err) {
-        return responseParser({ status: 404 }, res)
+        return errorHandler(err, res)
     }
 }
 
