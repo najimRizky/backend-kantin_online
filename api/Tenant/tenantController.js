@@ -293,13 +293,48 @@ const dashboard = async (req, res) => {
     }
 }
 
+const getAllPreview = async (req, res) => {
+    try {
+        const { _id } = req.user
+        const allReview = await Review.find({ tenant: _id }, { tenant: 0 })
+            .populate("customer", ["full_name", "profile_image"])
+            .sort({ createdAt: -1 })
+
+        const reviewSummary = await Review.aggregate([
+            {
+                $match: {
+                    tenant: mongoose.Types.ObjectId(_id)
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    total_review: { $sum: 1 },
+                    average_rating: { $avg: "$rating" },
+                    total_5_rating: { $sum: { $cond: [{ $eq: ["$rating", 5] }, 1, 0] } },
+                    total_4_rating: { $sum: { $cond: [{ $eq: ["$rating", 4] }, 1, 0] } },
+                    total_3_rating: { $sum: { $cond: [{ $eq: ["$rating", 3] }, 1, 0] } },
+                    total_2_rating: { $sum: { $cond: [{ $eq: ["$rating", 2] }, 1, 0] } },
+                    total_1_rating: { $sum: { $cond: [{ $eq: ["$rating", 1] }, 1, 0] } },
+                }
+            }
+        ])
+
+        return responseParser({ status: 200, data: { reviews: allReview, ...reviewSummary[0] } }, res)
+
+            } catch (err) {
+                return errorHandler(err, res)
+            }
+    }
+
 export default {
-    editProfile,
-    getProfile,
-    register,
-    getDetail,
-    getAll,
-    editProfileImage,
-    changePassword,
-    dashboard
-}
+        editProfile,
+        getProfile,
+        register,
+        getDetail,
+        getAll,
+        editProfileImage,
+        changePassword,
+        dashboard,
+        getAllPreview
+    }

@@ -15,7 +15,6 @@ router.get(
     tenantController.getAll
 )
 
-
 /** @TENANT_HOME_DASHBOARD */
 router.get(
     "/dashboard",
@@ -28,6 +27,13 @@ router.get(
     "/profile",
     requireAuth(roleConfig.tenant),
     tenantController.getProfile
+)
+
+/** @GET_ALL_TENANT_REVIEW */
+router.get(
+    "/review",
+    requireAuth(roleConfig.tenant),
+    tenantController.getAllPreview
 )
 
 /** @GET_DETAIL_TENANT */
