@@ -53,13 +53,13 @@ router.patch(
     checkValidation,
     orderController.finishOrder
 )
+
 /** @GET_ALL_ORDER */
 router.get(
     "/",
     requireAuth(),
     orderController.getAllOrder
 )
-
 
 /** @GET_ALL_ON_PROGRESS_ORDER */
 router.get(

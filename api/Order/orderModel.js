@@ -113,7 +113,7 @@ orderSchema.statics.getSingleOrder = async function (_id, role, user_id) {
         },
         {
             path: 'review',
-            select: ['rating', 'content']
+            select: ['rating', 'content', 'createdAt']
         },
         {
             path: role === 'customer' ? 'tenant' : 'customer',
