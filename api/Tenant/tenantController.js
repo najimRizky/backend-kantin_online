@@ -60,15 +60,15 @@ const register = async (req, res) => {
 const getProfile = async (req, res) => {
     try {
         const { _id } = req.user
-        const tenant = await Tenant.findById(_id, ["balance", "email", "full_name", "profile_image", "orders"])
+        const tenant = await Tenant.findById(_id, ["email", "full_name", "location", "description", "profile_image"])
 
         if (!tenant) {
-            throw Error
+            throw Error ("Tenant not found||404")
         }
 
         return responseParser({ status: 200, data: tenant }, res)
     } catch (err) {
-        return responseParser({ status: 404 }, res)
+        return errorHandler(err, res)
     }
 }
 
