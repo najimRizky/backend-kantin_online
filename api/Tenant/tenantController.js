@@ -15,9 +15,14 @@ const editProfile = async (req, res) => {
         const { _id } = req.user
         const { full_name, location, description, email } = req.body
 
-        if (await isEmailExist(email)) {
-            throw Error("Email already used||409")
+        const tenant = await Tenant.findById(_id, ["email"])
+
+        if (tenant.email !== email) {
+            if (await isEmailExist(email)) {
+                throw Error("Email already used||409")
+            }
         }
+
 
         const data = { full_name, location, email, description }
 
@@ -25,7 +30,7 @@ const editProfile = async (req, res) => {
         return responseParser({ status: 200 }, res)
     } catch (err) {
         console.log(err)
-        return responseParser({ status: 404 }, res)
+        return errorHandler(err, res)
     }
 }
 
@@ -63,7 +68,7 @@ const getProfile = async (req, res) => {
         const tenant = await Tenant.findById(_id, ["email", "full_name", "location", "description", "profile_image"])
 
         if (!tenant) {
-            throw Error ("Tenant not found||404")
+            throw Error("Tenant not found||404")
         }
 
         return responseParser({ status: 200, data: tenant }, res)
@@ -322,19 +327,19 @@ const getAllPreview = async (req, res) => {
 
         return responseParser({ status: 200, data: { reviews: allReview, ...reviewSummary[0] } }, res)
 
-            } catch (err) {
-                return errorHandler(err, res)
-            }
+    } catch (err) {
+        return errorHandler(err, res)
     }
+}
 
 export default {
-        editProfile,
-        getProfile,
-        register,
-        getDetail,
-        getAll,
-        editProfileImage,
-        changePassword,
-        dashboard,
-        getAllPreview
-    }
+    editProfile,
+    getProfile,
+    register,
+    getDetail,
+    getAll,
+    editProfileImage,
+    changePassword,
+    dashboard,
+    getAllPreview
+}

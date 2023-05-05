@@ -44,7 +44,7 @@ router.get(
     tenantController.getDetail
 )
 
-/** @UPDATE_PROFILE_TENANT */
+/** @EDIT_PROFILE_TENANT */
 router.put(
     "/profile",
     requireAuth(roleConfig.tenant),
