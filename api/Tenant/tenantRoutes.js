@@ -62,7 +62,7 @@ router.put(
     tenantController.editProfileImage
 )
 
-/** @UPDATE_PROFILE_IMAGE_TENANT */
+/** @UPDATE_PASSWORD_TENANT */
 router.put(
     "/change-password",
     requireAuth(roleConfig.tenant),

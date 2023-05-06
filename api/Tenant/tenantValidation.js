@@ -53,11 +53,11 @@ const changePassword = [
     body("new_password")
         .exists({ checkFalsy: true })
         .isLength({ min: 6 })
-        .withMessage("New password must be included with at least 6 characters long."),
+        .withMessage("Password must be included with at least 6 characters long."),
     body("confirm_new_password")
         .exists({ checkFalsy: true })
-        .isLength({ min: 6 })
-        .withMessage("Confirm new password must be included with at least 6 characters long."),
+        .custom((value, { req }) => value === req.body.new_password)
+        .withMessage("Confirm new password must be matched with new password."),
 ]
 
 export default {
