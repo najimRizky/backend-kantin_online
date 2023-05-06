@@ -60,7 +60,8 @@ API ENDPOINT LIST
     GET     /on-progress        Get All On Progress Order
     POST    /review/:_id        Add Order Review
 
-/search         Search Menu
-/random-menu    Get Random Menu
-/random-tenant  Get Random Tenant
+:root
+    GET     /search         Search Menu
+    GET     /random-menu    Get Random Menu
+    GET     /random-tenant  Get Random Tenant
 ```
