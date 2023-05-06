@@ -1,3 +1,4 @@
+```
 API ENDPOINT LIST
 
 /account
@@ -62,3 +63,4 @@ API ENDPOINT LIST
 /search         Search Menu
 /random-menu    Get Random Menu
 /random-tenant  Get Random Tenant
+```
