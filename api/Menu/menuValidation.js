@@ -59,9 +59,6 @@ const addCategory = [
     body("title")
         .exists({ checkFalsy: true })
         .withMessage("Category title is required"),
-    body("description")
-        .exists()
-        .withMessage("Category description field is required"),
 ]
 
 const editCategory = [
@@ -72,9 +69,6 @@ const editCategory = [
     body("title")
         .exists({ checkFalsy: true })
         .withMessage("Category title is required"),
-    body("description")
-        .exists()
-        .withMessage("Category description field is required"),
 ]
 
 export default {

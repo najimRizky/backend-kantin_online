@@ -94,18 +94,17 @@ const addMenu = async (req, res) => {
         const newMenu = await Menu.addMenu(_id, data)
         return responseParser({ status: 200, data: newMenu }, res)
     } catch (err) {
-        return responseParser({ status: 400 }, res)
+        return errorHandler(err, res)
     }
 }
 
 const addCategory = async (req, res) => {
     try {
         const tenantId = req.user._id
-        const { title, description } = req.body
+        const { title } = req.body
 
         const data = {
             title: title,
-            description: description,
             tenant: tenantId
         }
 
@@ -120,12 +119,11 @@ const addCategory = async (req, res) => {
 const editCategory = async (req, res) => {
     try {
         const tenantId = req.user._id
-        const { title, description } = req.body
+        const { title } = req.body
         const { category_id } = req.params
 
         const data = {
             title: title,
-            description: description,
         }
 
         const editedMenuCategory = await MenuCategory.findOneAndUpdate({ tenant: tenantId, _id: category_id }, data)
@@ -144,7 +142,7 @@ const getAllCategory = async (req, res) => {
 
         const allCategory = await MenuCategory.find({ tenant: tenantId })
 
-        return responseParser({ status: 200, allCategory }, res)
+        return responseParser({ status: 200, data: allCategory }, res)
     } catch (err) {
         return errorHandler(err, res)
     }

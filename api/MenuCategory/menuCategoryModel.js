@@ -7,9 +7,6 @@ const menuCategoryModel = new Schema({
         type: String,
         required: true,
     },
-    description: {
-        type: String,
-    },
     tenant: {
         type: Schema.Types.ObjectId,
         required: true,

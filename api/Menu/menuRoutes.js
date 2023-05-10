@@ -9,14 +9,6 @@ const router = express.Router()
 
 /** @see /menu */
 
-/** @GET_SINGLE_MENU */
-router.get(
-    "/:_id",
-    menuValidation.getDetail,
-    checkValidation,
-    menuController.getDetail
-)
-
 /** @ADD_MENU */
 router.post(
     "/",
@@ -68,6 +60,14 @@ router.put(
     menuValidation.editCategory,
     checkValidation,
     menuController.editCategory,
+)
+
+/** @GET_SINGLE_MENU */
+router.get(
+    "/:_id",
+    menuValidation.getDetail,
+    checkValidation,
+    menuController.getDetail
 )
 
 export default router

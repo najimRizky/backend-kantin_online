@@ -328,6 +328,21 @@ const getAllPreview = async (req, res) => {
     }
 }
 
+const getAllMenu = async (req, res) => {
+    try {
+        const { _id } = req.user
+
+        const allMenu = await Menu.find({ tenant: _id }, { tenant: 0 })
+            .populate("category", ["title"])
+            .sort({ title: 1 })
+
+        return responseParser({ status: 200, data: allMenu }, res)
+    } catch (err) {
+        return errorHandler(err, res)
+    }
+}
+
+
 export default {
     editProfile,
     getProfile,
@@ -337,5 +352,6 @@ export default {
     editProfileImage,
     changePassword,
     dashboard,
-    getAllPreview
+    getAllPreview,
+    getAllMenu
 }

@@ -36,6 +36,13 @@ router.get(
     tenantController.getAllPreview
 )
 
+/** @GET_ALL_TENANT_MENU */
+router.get(
+    "/menu",
+    requireAuth(roleConfig.tenant),
+    tenantController.getAllMenu
+)
+
 /** @GET_DETAIL_TENANT */
 router.get(
     "/:_id",
