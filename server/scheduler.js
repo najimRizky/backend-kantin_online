@@ -3,7 +3,7 @@ import Order from "../api/Order/orderModel.js"
 import Tenant from "../api/Tenant/tenantModel.js"
 import Customer from "../api/Customer/customerModel.js"
 
-const AUTO_REJCT_ORDER_DURATION_MS = process.env.AUTO_REJCT_ORDER_DURATION_MS || 5 * 60 * 1000 // 3 minutes (min x sec x milisec)
+const AUTO_REJCT_ORDER_DURATION_MS = process.env.AUTO_REJECT_ORDER_DURATION_MS || 5 * 60 * 1000 // 3 minutes (min x sec x milisec)
 
 const assignAutoRejectOrder = (order_id, tenant_id, created_at) => {
     schedule.scheduleJob(order_id.toString(), new Date(Date.parse(created_at) + Number(AUTO_REJCT_ORDER_DURATION_MS)), async () => { // 3 minutes (min x sec x milisec)
