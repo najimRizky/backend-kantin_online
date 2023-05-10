@@ -148,6 +148,24 @@ const getAllCategory = async (req, res) => {
     }
 }
 
+const toggleAvailability = async (req, res) => {
+    try {
+        const tenantId = req.user._id
+        const { _id } = req.params
+        
+        const menu = await Menu.findOne({ _id: _id, tenant: tenantId })
+        if (!menu) throw Error("||404")
+
+        const is_available = !menu.is_available
+
+        await Menu.findOneAndUpdate({ _id: _id, tenant: tenantId }, { $set: { is_available: is_available } })
+
+        return responseParser({ status: 200 }, res)
+    } catch (err) {
+        return errorHandler(err, res)
+    }
+}
+
 export default {
     editMenu,
     getDetail,
@@ -155,5 +173,6 @@ export default {
     deleteMenu,
     addCategory,
     getAllCategory,
-    editCategory
+    editCategory,
+    toggleAvailability
 }

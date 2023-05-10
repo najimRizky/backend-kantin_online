@@ -62,6 +62,15 @@ router.put(
     menuController.editCategory,
 )
 
+/** @TOGGLE_MENU_AVAILABILTY */
+router.patch(
+    "/toggle-availability/:_id",
+    requireAuth(roleConfig.tenant),
+    menuValidation.toggleAvailability,
+    checkValidation,
+    menuController.toggleAvailability
+)
+
 /** @GET_SINGLE_MENU */
 router.get(
     "/:_id",

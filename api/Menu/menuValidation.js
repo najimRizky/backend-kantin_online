@@ -71,6 +71,13 @@ const editCategory = [
         .withMessage("Category title is required"),
 ]
 
+const toggleAvailability = [
+    param("_id")
+        .exists({ checkFalsy: true })
+        .isMongoId()
+        .withMessage("Invalid parameter"),
+]
+
 export default {
     uploadValidation,
     editMenu,
@@ -78,5 +85,6 @@ export default {
     getDetail,
     deleteMenu,
     addCategory,
-    editCategory
+    editCategory,
+    toggleAvailability
 }
