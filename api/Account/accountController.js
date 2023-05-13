@@ -63,6 +63,7 @@ const customerLogin = async ({ password, customer }) => {
         full_name: customer.full_name,
         role: roleConfig.customer,
         profile_image: customer.profile_image,
+        _id: customer._id,
         access_token
     }
 }
@@ -79,6 +80,7 @@ const tenantLogin = async ({ password, tenant }) => {
         full_name: tenant.full_name,
         role: roleConfig.tenant,
         profile_image: tenant.profile_image,
+        _id: tenant._id,
         access_token
     }
 }

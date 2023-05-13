@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 console.clear()
 import "./config/loadEnv.js"
 
@@ -21,9 +22,13 @@ import otherRoutes from "./api/Other/otherRoutes.js"
 import cartRoutes from "./api/Cart/cartRoutes.js"
 import orderRoutes from "./api/Order/orderRoutes.js"
 import adminRoutes from "./api/Admin/adminRoutes.js"
+import { Server } from "socket.io"
+import { createServer } from "http"
+import SocketService from "./server/socketService.js"
 
 /** @Initialization */
 const server = express()
+const httpServer = createServer(server)
 server.use(express.json())
 server.set('view engine', 'ejs');
 server.use(requestLogger)
@@ -54,7 +59,9 @@ server.all("*", (req, res) => {
 
 const ENABLE_DB = eval(process.env.ENABLE_DB)
 if (ENABLE_DB) {
-    connectDatabase(server)
+    connectDatabase(httpServer)
 } else {
-    serverListen(server)
+    serverListen(httpServer)
 }
+
+server.set("socketService", new SocketService(httpServer))

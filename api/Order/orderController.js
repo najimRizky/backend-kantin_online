@@ -47,6 +47,14 @@ const createOrder = async (req, res) => {
         await session.commitTransaction()
         session.endSession()
 
+        await req.app
+        .get("socketService")
+        .emiter({
+            event: `tenant/update/${cart.tenant}`, 
+            url: "/order/on-progress?priority=fcfs",
+            message: "New Order Coming"
+        })
+
         return responseParser({ data: createdOrder }, res)
     } catch (err) {
         await session.abortTransaction()
