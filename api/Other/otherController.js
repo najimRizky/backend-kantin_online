@@ -26,7 +26,7 @@ const search = async (req, res) => {
         ]);
         
         const tenant = await Tenant.find({
-            $or: [
+            $and: [
                 { full_name: { $regex: q, $options: 'i' } },
             ]
         }, [
