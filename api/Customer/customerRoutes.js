@@ -18,7 +18,7 @@ router.get(
 )
 
 /** @UPDATE_BALANCE */
-router.post(
+router.patch(
     "/balance",
     requireAuth(roleConfig.customer),
     customerValidation.updateBalance,    
