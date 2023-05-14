@@ -64,6 +64,7 @@ const randomMenu = async (req, res) => {
                     description: 1,
                     image: 1,
                     price: 1,
+                    is_available: 1,
                     tenant: {
                         _id: 1,
                         full_name: 1,

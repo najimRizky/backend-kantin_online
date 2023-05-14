@@ -127,7 +127,8 @@ cartSchema.statics.getSingleCart = async function ({ tenant_id, customer_id }) {
             "title",
             "description",
             "image",
-            "price"
+            "price",
+            "is_available"
         ])
 
     return singleCart
@@ -146,7 +147,8 @@ cartSchema.statics.getAllCart = async function ({ customer_id }) {
             "title",
             "description",
             "image",
-            "price"
+            "price",
+            "is_available"
         ])
 
     return allCart

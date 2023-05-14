@@ -9,9 +9,9 @@ const addItem = async (req, res) => {
         const { tenant_id } = req.params
         const { menu_id, quantity } = req.body
 
-        const menu = await Menu.findOne({ _id: menu_id, tenant: tenant_id })
+        const menu = await Menu.findOne({ _id: menu_id, tenant: tenant_id, is_available: true })
 
-        if (!menu) throw Error("||404")
+        if (!menu) throw Error("Menu not available||400")
 
         const cart = await Cart.findOne({
             tenant: tenant_id,
@@ -41,6 +41,9 @@ const updateItem = async (req, res) => {
         const customer_id = req.user._id
         const { tenant_id } = req.params
         const { menu_id, quantity } = req.body
+
+        const menu = await Menu.findOne({ _id: menu_id, tenant: tenant_id, is_available: true })
+        if (quantity > 0 && !menu) throw Error("Menu not available||400")
 
         await Cart.updateItemQuantity({ tenant_id, customer_id, menu_id, quantity })
 

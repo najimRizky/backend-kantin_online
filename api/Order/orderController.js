@@ -20,6 +20,9 @@ const createOrder = async (req, res) => {
         const cart = await Cart.findOne({ _id: cart_id, customer: customer_id }).populate("items.menu")
         if (!cart) throw Error("||404")
 
+        const allMenuAvailable = cart.items.every((item) => item.menu.is_available)
+        if (!allMenuAvailable) throw Error("Some menu not available||400")
+
         const totalPrice = calculateTotalPrice(cart.items)
         const totalPrepDuration = calculateTotalPrepDuration(cart.items)
         const customerBalance = await Customer.findById(customer_id, ["balance"])

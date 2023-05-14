@@ -122,7 +122,8 @@ const getDetail = async (req, res) => {
                             title: "$title",
                             description: "$description",
                             image: "$image",
-                            price: "$price"
+                            price: "$price",
+                            is_available: "$is_available",
                         }
                     }
                 }
