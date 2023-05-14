@@ -83,7 +83,10 @@ const confirmOrder = async (req, res) => {
 }
 
 const rejectOrder = async (req, res) => {
+    const session = await mongoose.startSession()
     try {
+        session.startTransaction()
+
         const { _id } = req.params
         const tenant_id = req.user._id
 
@@ -91,8 +94,18 @@ const rejectOrder = async (req, res) => {
 
         if (!rejectedOrder) throw Error("||404")
 
+        const updatedCustomerBalance = await Customer.addBalance(rejectedOrder.customer, rejectedOrder.total_price)
+
+        if (!updatedCustomerBalance) throw Error("||404")
+
+        await session.commitTransaction()
+        session.endSession()
+
         return responseParser({ status: 200 }, res)
     } catch (err) {
+        await session.abortTransaction()
+        session.endSession()
+        
         return errorHandler(err, res)
     }
 }
