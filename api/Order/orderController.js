@@ -194,7 +194,7 @@ const addReview = async (req, res) => {
         const filter = {
             _id: _id,
             customer: customer_id,
-            status: "finished",
+            status: "completed",
             review: null
         }
 
