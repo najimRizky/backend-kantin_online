@@ -46,6 +46,13 @@ const connectDatabase = (server) => {
         console.error(`--- DB Disconnected --- (${moment().format("DD/MMM hh:mm:ss A")})`)
         process.exit();
     });
+    
+    process.on("SIGTERM", function () {
+        mongoose.connection.close();
+        serverClose(serverInstance)
+        console.error(`--- DB Disconnected --- (${moment().format("DD/MMM hh:mm:ss A")})`)
+        process.exit();
+    });
 };
 
 export default connectDatabase
