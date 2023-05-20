@@ -55,7 +55,7 @@ const createOrder = async (req, res) => {
         .emiter({
             event: `tenant/update/${cart.tenant}`, 
             url: "/order/on-progress?priority=fcfs",
-            message: "New Order Coming"
+            message: "Ada Pesanan Baru"
         })
 
         return responseParser({ data: createdOrder }, res)
