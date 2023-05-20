@@ -78,8 +78,15 @@ const confirmOrder = async (req, res) => {
 
         scheduler.removeAutoRejectOrder(_id)
 
-        return responseParser({ status: 200 }, res)
+        await req.app
+        .get("socketService")
+        .emiter({
+            event: `customer/update/${confirmedOrder.customer}`, 
+            url: ["/order/", `/order/${_id}`],
+            message: "Order Confirmed!"
+        })
 
+        return responseParser({ status: 200 }, res)
     } catch (err) {
         return errorHandler(err, res)
     }
@@ -104,6 +111,15 @@ const rejectOrder = async (req, res) => {
         await session.commitTransaction()
         session.endSession()
 
+        await req.app
+        .get("socketService")
+        .emiter({
+            event: `customer/update/${rejectedOrder.customer}`, 
+            url: ["/order/", `/order/${_id}`],
+            message: "Order Rejected!",
+            severity: "error"
+        })
+
         return responseParser({ status: 200 }, res)
     } catch (err) {
         await session.abortTransaction()
@@ -121,6 +137,15 @@ const serveOrder = async (req, res) => {
         const servedOrder = await Order.serveOrder(_id, tenant_id)
 
         if (!servedOrder) throw Error("||404")
+        
+        await req.app
+        .get("socketService")
+        .emiter({
+            event: `customer/update/${servedOrder.customer}`, 
+            url: ["/order/", `/order/${_id}`],
+            message: "Order is Ready to take!",
+            severity: "warning"
+        })
 
         return responseParser({ status: 200 }, res)
     } catch (err) {
@@ -144,6 +169,15 @@ const finishOrder = async (req, res) => {
 
         await session.commitTransaction()
         session.endSession()
+
+        await req.app
+        .get("socketService")
+        .emiter({
+            event: `customer/update/${completedOrder.customer}`, 
+            url: ["/order/", `/order/${_id}`],
+            message: "Order Completed!, Please give a review",
+            severity: "success"
+        })
 
         return responseParser({ status: 200 }, res)
     } catch (err) {
