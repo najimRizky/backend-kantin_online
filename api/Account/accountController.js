@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import responseParser from "../../helper/responseParser.js";
 import Customer from "../Customer/customerModel.js";
 import Tenant from "../Tenant/tenantModel.js";
@@ -20,7 +21,7 @@ const login = async (req, res) => {
         const admin = email === ADMIN_EMAIL && password === ADMIN_PASSWORD
         if (admin) {
             const login = await adminLogin()
-            return responseParser({status: 200, data: login}, res)
+            return responseParser({ status: 200, data: login }, res)
         }
 
         const tenant = await Tenant.findOne({ email });
@@ -181,6 +182,12 @@ const resetPassword = async (req, res) => {
     } catch (err) {
         return errorHandler(err, res)
     }
+}
+const capitalizeFullName = (str) => {
+    const words = str.toLowerCase().split(' ');
+    const capitalizedWords = words.map(word => word.charAt(0).toUpperCase() + word.slice(1));
+    const capitalizedString = capitalizedWords.join(' ');
+    return capitalizedString;
 }
 
 export default {

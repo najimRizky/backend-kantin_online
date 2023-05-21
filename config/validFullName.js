@@ -1,3 +1,3 @@
-const validFullName = /^[A-Z][a-z]*( [A-Z][a-z]*)*([-][A-Z][a-z]*)*$/;
+const validFullName = /^[A-Za-z\s]+$/
 
 export default validFullName

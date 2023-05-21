@@ -15,13 +15,12 @@ const login = [
 const register = [
     body("email")
         .exists({ checkFalsy: true })
-        .withMessage("Email is required")
-        .isEmail(),
+        .isEmail()
+        .withMessage("Email is not included or invalid"),
     body("full_name")
         .exists({ checkFalsy: true })
-        .withMessage("Full Name is required")
         .custom((value) => {
-            if (!validFullName.test(value)) throw new Error("Invalid Full Name")
+            if (!validFullName.test(value)) throw new Error("Full name is not valid or not included")
             return true
         }),
     body("password")
