@@ -15,22 +15,27 @@ const login = [
 const register = [
     body("email")
         .exists({ checkFalsy: true })
+        .withMessage("Email is not included or invalid")
         .isEmail()
-        .withMessage("Email is not included or invalid"),
+    ,
     body("full_name")
         .exists({ checkFalsy: true })
+        .withMessage("Full name is not included or invalid")
         .custom((value) => {
-            if (!validFullName.test(value)) throw new Error("Full name is not valid or not included")
+            if (!validFullName.test(value)) return false
             return true
-        }),
+        })
+    ,
     body("password")
         .exists({ checkFalsy: true })
+        .withMessage("Password must be included with at least 6 characters long")
         .isLength({ min: 6 })
-        .withMessage("Password must be included with at least 6 characters long"),
+    ,
     body("confirm_password")
         .exists({ checkFalsy: true })
+        .withMessage("Confirm password must match password.")
         .custom((value, { req }) => value === req.body.password)
-        .withMessage("Confirm password must match password."),
+    ,
 ]
 
 const confirm = [

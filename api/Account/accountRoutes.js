@@ -20,6 +20,7 @@ router.post(
 router.post(
     "/register",
     accountValidation.register,
+    (req, _, next) => { req.onlyFirstError = true; next(); },
     checkValidation,
     accountController.register
 )
