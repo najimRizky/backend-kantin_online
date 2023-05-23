@@ -122,7 +122,7 @@ const confirm = async (req, res) => {
 
         if (!customer) throw Error("Confirmation failed. Your account is already confirmed or invalid token||403")
 
-        return res.send("Account confirmation success! You may login now.")
+        return res.render("confirm-account", { BASE_URL_FE: process.env.BASE_URL_FE })
 
     } catch (err) {
         return errorHandler(err, res)
