@@ -40,7 +40,7 @@ const menuSchema = new Schema({
     },
     is_available: {
         type: Boolean,
-        default: false
+        default: true
     }
 }, { timestamps: true })
 
