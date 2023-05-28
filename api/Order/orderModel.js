@@ -162,7 +162,7 @@ orderSchema.statics.getAllOnProgressOrder = async function (role, user_id) {
         { [role]: 0 },
     ).populate(populateFields)
 
-    if (createdOrder.length >= 5 ) {
+    if (createdOrder.length >= 4 ) {
         createdOrder.sort(sortSJF)
     } else {
         createdOrder.sort(sortFCFS)
