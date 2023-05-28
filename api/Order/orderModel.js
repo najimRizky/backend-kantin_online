@@ -1,3 +1,4 @@
+import moment from "moment";
 import mongoose from "mongoose";
 
 const Schema = mongoose.Schema
@@ -129,10 +130,15 @@ orderSchema.statics.getSingleOrder = async function (_id, role, user_id) {
     return singleOrder;
 }
 
-orderSchema.statics.getAllOnProgressOrder = async function (role, user_id, priority) {
-    const sortType = priority === "fcfs" ? { "progress.created": 1 }
-        : priority === "sjf" ? { "total_prep_duration": 1 } : { "progress.created": 1 };
+const sortFCFS = (a, b) => {
+    return moment(a.progress.created).unix() - moment(b.progress.created).unix()
+}
 
+const sortSJF = (a, b) => {
+    return a.total_prep_duration - b.total_prep_duration
+}
+
+orderSchema.statics.getAllOnProgressOrder = async function (role, user_id) {
     const populateFields = [
         {
             path: 'items.menu',
@@ -154,7 +160,13 @@ orderSchema.statics.getAllOnProgressOrder = async function (role, user_id, prior
             status: "created"
         },
         { [role]: 0 },
-    ).populate(populateFields).sort(sortType);
+    ).populate(populateFields)
+
+    if (createdOrder.length >= 5 ) {
+        createdOrder.sort(sortSJF)
+    } else {
+        createdOrder.sort(sortFCFS)
+    }
 
     const preparingOrder = await this.find(
         {
