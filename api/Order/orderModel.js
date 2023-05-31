@@ -162,7 +162,15 @@ orderSchema.statics.getAllOnProgressOrder = async function (role, user_id) {
         { [role]: 0 },
     ).populate(populateFields)
 
-    if (createdOrder.length >= 4 ) {
+    const onGoingOrder = await this.find( // status preparing or onprogress
+        {
+            [role]: user_id,
+            status: { $in: ["preparing", "ready"] }
+        },
+        { [role]: 0 },
+    ).populate(populateFields)
+
+    if (onGoingOrder.length >= 4 ) {
         createdOrder.sort(sortSJF)
     } else {
         createdOrder.sort(sortFCFS)
@@ -176,6 +184,21 @@ orderSchema.statics.getAllOnProgressOrder = async function (role, user_id) {
         { [role]: 0 },
     ).populate(populateFields).sort({ "progress.preparing": 1 });
 
+    let totalWaitingTime = 0
+    const startTime = preparingOrder?.[0]?.progress.preparing
+    const fixPreparingOrder = preparingOrder?.map(order => {
+        const newOrder = order.toObject()
+        const burstTime = newOrder.total_prep_duration * 60 * 1000
+        const arrivalTime = (moment(newOrder.progress.preparing).unix() - moment(startTime).unix()) * 1000 
+        const finishTime = (moment(newOrder.progress.preparing).unix() + burstTime) - moment(startTime).unix() + totalWaitingTime
+        const waitingTime = finishTime - arrivalTime - burstTime
+        totalWaitingTime = finishTime
+        console.log(burstTime/(60 * 1000), arrivalTime/(60 * 1000), finishTime/(60 * 1000), waitingTime/(60 * 1000))
+        newOrder.waiting_time = waitingTime
+        newOrder.turnaround_time = waitingTime + burstTime
+        return newOrder
+    }) || []
+
     const readyOrder = await this.find(
         {
             [role]: user_id,
@@ -186,7 +209,7 @@ orderSchema.statics.getAllOnProgressOrder = async function (role, user_id) {
 
     const allOrder = {
         created: createdOrder,
-        preparing: preparingOrder,
+        preparing: fixPreparingOrder,
         ready: readyOrder
     };
 
