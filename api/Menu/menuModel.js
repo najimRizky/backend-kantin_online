@@ -54,7 +54,7 @@ menuSchema.statics.addMenu = async function (_id, data) {
 
 }
 
-menuSchema.pre(["find", "findOne", "fingOneAndUpdate"], function (next) {
+menuSchema.pre(["find", "findOne", "findOneAndUpdate", "populate"], function (next) {
     const { skipMiddleware } = this.getOptions()
     if (skipMiddleware) {
         return next()

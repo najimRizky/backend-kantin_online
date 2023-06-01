@@ -110,7 +110,8 @@ orderSchema.statics.getSingleOrder = async function (_id, role, user_id) {
     const populateFields = [
         {
             path: 'items.menu',
-            select: ['title', 'description', 'image']
+            select: ['title', 'description', 'image'],
+            options: {skipMiddleware: true}
         },
         {
             path: 'review',
@@ -221,7 +222,8 @@ orderSchema.statics.getAllOrder = async function (role, user_id) {
     const populateFields = [
         {
             path: 'items.menu',
-            select: ['title', 'description', 'image']
+            select: ['title', 'description', 'image'],
+            options: {skipMiddleware: true}
         },
         {
             path: 'review',
