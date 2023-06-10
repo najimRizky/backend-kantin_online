@@ -35,7 +35,7 @@ server.use(requestLogger)
 server.use(cors())
 
 server.get('/', (_, res) => {
-    return responseParser({ data: "REST API Kantin UMN", status: 200 }, res)
+    return responseParser({ data: "REST API Kantin ONLINE", status: 200 }, res)
 })
 server.use("/", otherRoutes)
 server.use("/upload", uploadRoutes)
