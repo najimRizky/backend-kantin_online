@@ -13,7 +13,7 @@ const editProfileImage = async (req, res) => {
         const url = await uploadToBucket({ req, currentUrl: profile_image })
         const newProfileImage = url
         await Customer.findByIdAndUpdate(_id, { profile_image: newProfileImage })
-        
+
         return responseParser({ status: 200 }, res)
     } catch (err) {
         return errorHandler(err, res)
@@ -25,8 +25,12 @@ const editProfile = async (req, res) => {
         const { _id } = req.user
         const { full_name, email } = req.body
 
-        if (await isEmailExist(email)) {
-            throw Error("Email already used||409")
+        const customer = await Customer.findById(_id, ["email"])
+
+        if (email !== customer.email) {
+            if (await isEmailExist(email)) {
+                throw Error("Email already used||409")
+            }
         }
 
         const data = { full_name, email }
