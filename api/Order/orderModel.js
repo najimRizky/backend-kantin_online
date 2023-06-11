@@ -166,7 +166,7 @@ orderSchema.statics.getAllOnProgressOrder = async function (role, user_id) {
     const onGoingOrder = await this.find( // status preparing or onprogress
         {
             [role]: user_id,
-            status: { $in: ["preparing", "ready"] }
+            status: { $in: ["preparing", "created"] }
         },
         { [role]: 0 },
     ).populate(populateFields)
