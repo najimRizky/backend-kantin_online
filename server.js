@@ -8,7 +8,7 @@ import cors from "cors"
 
 /** @Function */
 import responseParser from "./helper/responseParser.js"
-import connectDatabase from "./database/connectDatabase.js"
+import runServer from "./server/runServer.js"
 import { serverListen } from "./server/serverConnection.js"
 import requestLogger from "./server/requestLogger.js"
 
@@ -59,7 +59,7 @@ server.all("*", (req, res) => {
 
 const ENABLE_DB = eval(process.env.ENABLE_DB)
 if (ENABLE_DB) {
-    connectDatabase(httpServer)
+    runServer(httpServer)
 } else {
     serverListen(httpServer)
 }

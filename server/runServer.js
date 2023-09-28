@@ -1,5 +1,5 @@
 import moment from "moment"
-import { serverClose, serverListen } from "../server/serverConnection.js"
+import { serverClose, serverListen } from "./serverConnection.js"
 import mongoose from "mongoose"
 
 const MONGO_DB_URI = process.env.MONGO_DB_URI
@@ -15,7 +15,7 @@ const runConnection = async () => {
 
 let serverInstance
 
-const connectDatabase = (server) => {
+const runServer = (server) => {
     mongoose.set("strictQuery", false);
     runConnection();
 
@@ -55,4 +55,4 @@ const connectDatabase = (server) => {
     });
 };
 
-export default connectDatabase
+export default runServer
