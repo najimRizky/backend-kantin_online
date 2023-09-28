@@ -42,7 +42,7 @@ const createOrder = async (req, res) => {
             total_prep_duration: totalPrepDuration,
         }
         const createdOrder = await Order.createOrder(newOrder)
-        await Cart.clearCartById(cart_id)
+        // await Cart.clearCartById(cart_id)
         await Customer.reduceBalance(customer_id, totalPrice)
         
         scheduler.assignAutoRejectOrder(createdOrder._id, cart.tenant, createdOrder.progress.created)
